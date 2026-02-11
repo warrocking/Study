@@ -1,0 +1,7 @@
+# Build artifacts
+*.exe
+*.obj
+*.pdb
+*.ilk
+# Editor config
+.vscode/
