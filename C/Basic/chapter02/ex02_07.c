@@ -9,23 +9,12 @@
 int main(void)
 {
     // 선언
-    int value;
 
     // 입력
-    printf("변환 할 숫자 : ");
-    scanf_s("%d", &value);
 
     // 처리
 
     // 출력
-    // 10진수
-    printf("\n10진수 : %d\n", value);
-
-    // 8진수
-    printf("8진수 : %o\n", value);
-
-    // 16진수
-    printf("16진수 : %x\n", value);
 
     // 함수종료
     return 0;

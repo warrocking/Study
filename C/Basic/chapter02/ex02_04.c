@@ -1,5 +1,5 @@
 /* 문제 요약:
-   -
+   - 정수와 실수의 출력
 */
 #define _CRT_SECURE_NO_WARNINGS // 전처리기 세팅
 #include <stdio.h>              // 필요시 추가 헤더: <stdlib.h>, <string.h>, <math.h> 등
@@ -9,23 +9,19 @@
 int main(void)
 {
     // 선언
-    int value;
 
     // 입력
-    printf("변환 할 숫자 : ");
-    scanf_s("%d", &value);
 
     // 처리
 
     // 출력
-    // 10진수
-    printf("\n10진수 : %d\n", value);
+    printf("%d\b", 10);
+    printf("lf\n", 3.4);
+    printf("%.1lf\n", 3.45);
+    printf("%.10lf\n", 3.4);
 
-    // 8진수
-    printf("8진수 : %o\n", value);
-
-    // 16진수
-    printf("16진수 : %x\n", value);
+    printf("%d과 %d의 합은 %d입니다.\n", 10, 20, 10 + 20);
+    printf("%.1lf - %.1lf = %.1lf\n", 3.4, 1.2, 4.6 - 1.2);
 
     // 함수종료
     return 0;
