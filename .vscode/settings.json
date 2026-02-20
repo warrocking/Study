@@ -2,15 +2,15 @@
     "git.useEditorAsCommitInput":  true,
     "terminal.external.windowsExec":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
     "files.exclude":  {
-                          "C/Basic/**/*.exe":  true,
-                          "C/Basic/**/*.obj":  true,
-                          "C/Basic/**/*.pdb":  true,
-                          "C/Basic/**/*.ilk":  true
+                          "**/*.exe":  true,
+                          "**/*.obj":  true,
+                          "**/*.pdb":  true,
+                          "**/*.ilk":  true
                       },
     "search.exclude":  {
-                           "C/Basic/**/*.exe":  true,
-                           "C/Basic/**/*.obj":  true,
-                           "C/Basic/**/*.pdb":  true,
-                           "C/Basic/**/*.ilk":  true
+                           "**/*.exe":  true,
+                           "**/*.obj":  true,
+                           "**/*.pdb":  true,
+                           "**/*.ilk":  true
                        }
 }

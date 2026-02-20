@@ -1,8 +1,18 @@
-/* 문제 요약:
-   -
+/*
+    문제 요약 : 대입, 더하기, 뺴기, 곱하기, 음수 연산
+
+    문제 설명
+    -
+    -
+    -
+    -
+    -
 */
 #define _CRT_SECURE_NO_WARNINGS // 전처리기 세팅
-#include <stdio.h>              // 필요시 추가 헤더: <stdlib.h>, <string.h>, <math.h> 등
+
+// 필요시 추가 헤더: <stdlib.h>, <string.h>, <math.h> 등
+#include <stdio.h>
+#include <string.h>
 
 // 함수 선언
 
