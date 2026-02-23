@@ -1,10 +1,8 @@
 /*
-    제작 시간 : 0223_13:58
+    제작 시간 : 0223_16:15
     유형 : 예제
-    제목 : 동적 할당 영역을 배열처럼 사용
-
-    개념
-    - 동적 할당 영역을 배열처럼 쓰기
+    주제 : 자기 참조 구조체
+    문제 설명: 자기 참조 구조체로 list 만들기
     -
 */
 
@@ -23,8 +21,17 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-// ------- 시작 ----------
+/* ----- 선언 공간 ----- */
+// 매크로 상수
+
+// 구조 선언 (typedef / struct / enum / union ...)
+struct list
+{
+    int num;
+    struct list *next; // 자기 자신을 가르키는 구조체   //자기 참조 구조체
+};
+
+// 전역 변수
 
 // ------ 끝 ----------
 
@@ -32,14 +39,31 @@
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    int *pi;
+    struct list a = {10, NULL},
+                b = {20, NULL},
+                c = {30, NULL};
+    struct list *head = &a, *current;
 
+    a.next = &b;
+    b.next = &c;
+    c.next = 0;
     /*        입 력       */
 
     /*        처 리       */
 
     /*        출 력       */
+    printf("head -> num : %d\n", head->num);
+    printf("head -> next -> num : %d\n", head->next->num);
+    printf("head -> next -> next -> num : %d\n", head->next->next->num);
 
+    printf("list all : ");
+    current = head;
+    while (current != NULL)
+    {
+        printf("%d ", current->num);
+        current = current->next;
+    }
+    printf("\n");
     /* 함수 종료 */
     return 0;
 }

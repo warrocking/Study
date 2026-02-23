@@ -1,10 +1,8 @@
 /*
-    제작 시간 : 0223_13:58
+    제작 시간 : 0223_14:50
     유형 : 예제
-    제목 : 동적 할당 영역을 배열처럼 사용
-
-    개념
-    - 동적 할당 영역을 배열처럼 쓰기
+    주제 : 구조체 배열
+    문제 설명: 구조체 배열을 초기화하고 출력
     -
 */
 
@@ -25,17 +23,44 @@
 
 /* 함수 선언 공간 */
 // ------- 시작 ----------
-
+struct address
+{
+    char name[20];
+    int age;
+    char tel[20];
+    char address[80];
+};
 // ------ 끝 ----------
 
 /* 메인 함수 정의 */
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    int *pi;
+    struct address list[5] = {
+        {"홍길동", 23, "111-1111", "울릉도-독도"},
+        {"이순신", 35, "222-2222", "서울 건천동"},
+        {"장보고", 19, "333-3333", "완도 강해진"},
+        {"유관순", 15, "444-4444", "충남 천안"},
+        {"안중근", 45, "555-5555", "황해도 해주"}};
 
     /*        입 력       */
+    for (int i = 0; i < (int)(sizeof(list) / sizeof(list[0])); i++)
+    {
+        printf("%s\t%d\t%s\t%s\n", list[i].name, list[i].age, list[i].tel, list[i].address);
+    }
+    printf("\n");
 
+    struct address *plist = list;
+    for (int i = 0; i < (int)(sizeof(list) / sizeof(list[0])); i++)
+    {
+        printf("%s\t%d\t%s\t%s\n", plist[i].name, plist[i].age, plist[i].tel, plist[i].address);
+    }
+    printf("\n");
+    for (int i = 0; i < (int)(sizeof(list) / sizeof(list[0])); i++)
+    {
+        printf("%s\t%d\t%s\t%s\n", (plist + i)->name, (plist + i)->age, (plist + i)->tel, (plist + i)->address);
+    }
+    printf("\n");
     /*        처 리       */
 
     /*        출 력       */

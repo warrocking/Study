@@ -1,11 +1,10 @@
 /*
-    제작 시간 : 0223_13:58
+    제작 시간 : 0223_14:02
     유형 : 예제
-    제목 : 동적 할당 영역을 배열처럼 사용
+    제목 : 구조체 변수를 함수의 매개변수에 사용하기
 
-    개념
-    - 동적 할당 영역을 배열처럼 쓰기
-    -
+    문제 설명
+    - 구조체를 반환하여 두 변수의 값 교환
 */
 
 #ifdef _MSC_VER
@@ -24,21 +23,40 @@
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
 /* 함수 선언 공간 */
-// ------- 시작 ----------
+struct vision
+{
+    double left;
+    double right;
+};
+struct vision exchange(struct vision robot) // 좌우 시력 변경
+{
+    double temp;
 
-// ------ 끝 ----------
+    temp = robot.left;
+    robot.left = robot.right;
+    robot.right = temp;
 
+    return robot;
+};
 /* 메인 함수 정의 */
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    int *pi;
-
+    struct vision robot;
     /*        입 력       */
+    printf("시력 입력\n");
+    printf("좌측 : ");
+    scanf("%lf", &(robot.left));
+    printf("우측 : ");
+    scanf("%lf", &(robot.right));
 
     /*        처 리       */
+    robot = exchange(robot);
 
     /*        출 력       */
+    printf("바뀐 시력\n");
+    printf("좌측 : %.1lf\n", robot.left);
+    printf("우측 : %.1lf\n", robot.right);
 
     /* 함수 종료 */
     return 0;

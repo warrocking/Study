@@ -1,10 +1,9 @@
 /*
-    제작 시간 : 0223_13:58
+    제작 시간 : 0223_11:59
     유형 : 예제
-    제목 : 동적 할당 영역을 배열처럼 사용
+    제목 : 다른 구조체를 멤버로 갖는 구조체 사용
 
     개념
-    - 동적 할당 영역을 배열처럼 쓰기
     -
 */
 
@@ -25,6 +24,17 @@
 
 /* 함수 선언 공간 */
 // ------- 시작 ----------
+struct profile
+{
+    int age;
+    double height;
+};
+struct student
+{
+    struct profile pf;
+    int id;
+    double grade;
+};
 
 // ------ 끝 ----------
 
@@ -32,14 +42,20 @@
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    int *pi;
+    struct student yuni;
 
     /*        입 력       */
-
+    yuni.pf.age = 17;
+    yuni.pf.height = 164.5;
+    yuni.id = 315;
+    yuni.grade = 4.3;
     /*        처 리       */
 
     /*        출 력       */
-
+    printf("나이 : %d\n", yuni.pf.age);
+    printf("키 : %.1lf\n", yuni.pf.height);
+    printf("학번 : %d\n", yuni.id);
+    printf("학점 : %.1lf\n", yuni.grade);
     /* 함수 종료 */
     return 0;
 }

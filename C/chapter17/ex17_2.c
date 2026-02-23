@@ -1,10 +1,9 @@
 /*
-    제작 시간 : 0223_13:58
+    제작 시간 : 0223_11:41
     유형 : 예제
-    제목 : 동적 할당 영역을 배열처럼 사용
+    제목 : 배열과 포인터를 멤버로 갖는 구조체 발동
 
     개념
-    - 동적 할당 영역을 배열처럼 쓰기
     -
 */
 
@@ -25,6 +24,13 @@
 
 /* 함수 선언 공간 */
 // ------- 시작 ----------
+struct profil
+{
+    char name[80];
+    int age;
+    double height;
+    char *intro;
+};
 
 // ------ 끝 ----------
 
@@ -32,14 +38,23 @@
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    int *pi;
+    struct profil yuni;
 
     /*        입 력       */
-
+    strcpy(yuni.name, "서하윤");
+    yuni.age = 17;
+    yuni.height = 164.5;
     /*        처 리       */
+    yuni.intro = (char *)malloc(sizeof(char) * 80);
+    printf("자기 소개 : ");
+    fgets(yuni.intro, sizeof(yuni.intro), stdin);
 
     /*        출 력       */
-
+    printf("항상 행복하세]요.\n");
+    printf("이름 : %s\n", yuni.name);
+    printf("나이 : %d\n", yuni.age);
+    printf("키 : %.1lf\n", yuni.height);
+    printf("자기소개 : %s\n", yuni.intro);
     /* 함수 종료 */
     return 0;
 }

@@ -1,10 +1,8 @@
 /*
-    제작 시간 : 0223_13:58
+    제작 시간 : 0223_16:41
     유형 : 예제
-    제목 : 동적 할당 영역을 배열처럼 사용
-
-    개념
-    - 동적 할당 영역을 배열처럼 쓰기
+    주제 : 공용체
+    문제 설명: 공용체를 사용한 학번과 학점 데이터 처리
     -
 */
 
@@ -23,8 +21,17 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-// ------- 시작 ----------
+/* ----- 선언 공간 ----- */
+// 매크로 상수
+
+// 구조 선언 (typedef / struct / enum / union ...)
+union student
+{
+    int num;
+    double grade;
+};
+
+// 전역 변수
 
 // ------ 끝 ----------
 
@@ -32,14 +39,17 @@
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    int *pi;
+    union student s1 = {315};
 
     /*        입 력       */
 
     /*        처 리       */
 
     /*        출 력       */
-
+    printf("학번 : %d\n", s1.num);
+    s1.grade = 4.4;
+    printf("학점 : %.1lf\n", s1.grade);
+    printf("학번 : %d\n", s1.num); // <-- 학번의 초깃갑이 학점 멤버에 의해서 바뀜.
     /* 함수 종료 */
     return 0;
 }
