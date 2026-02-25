@@ -1,8 +1,8 @@
 /*
-    제작 시간 : 0223_15:18
+    제작 시간 : 0225_16:42
     유형 : 예제
-    주제 : 구조체 포인터와 -> 연산자
-    문제 설명: 구조체 포인터의 사용
+    주제 : typedof를 사용한 형 재정의
+    문제 설명: typedef를 사용한 자료형 재정의
     -
 */
 
@@ -21,14 +21,23 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-// ------- 시작 ----------
-struct score
+/* ----- 선언 공간 ----- */
+// 매크로 상수
+
+// 구조 선언 (typedef / struct / enum / union ...)
+struct Student
 {
-    int kor;
-    int eng;
-    int math;
+    int num;
+    double grade;
 };
+typedef struct Student Student;
+void print_data(Student *ps)
+{
+    printf("학번 : %d\n", ps->num);
+    printf("학점 : %.1lf\n", ps->grade);
+}
+
+// 전역 변수
 
 // ------ 끝 ----------
 
@@ -36,21 +45,13 @@ struct score
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct score yuni = {90, 80, 70};
-    struct score *ps = &yuni;
+    Student s1 = {315, 4.2};
 
     /*        입 력       */
 
     /*        처 리       */
-
+    print_data(&s1);
     /*        출 력       */
-    printf("국어 : %d\n", (*ps).kor);
-    printf("국어 : %d\n", yuni.kor);
-    yuni.kor = 100; // side effect : 부작용
-    //(*yuni).kor = 200; // 원본 수정 side effect
-
-    printf("영어 : %d\n", ps->eng);
-    printf("수학 : %d\n", ps->math);
 
     /* 함수 종료 */
     return 0;

@@ -1,8 +1,8 @@
 /*
-    제작 시간 : 0223_15:18
-    유형 : 예제
-    주제 : 구조체 포인터와 -> 연산자
-    문제 설명: 구조체 포인터의 사용
+    제작 시간 : 0225_10:41
+    유형 : 과제
+    주제 :
+    문제 설명:
     -
 */
 
@@ -21,14 +21,12 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-// ------- 시작 ----------
-struct score
-{
-    int kor;
-    int eng;
-    int math;
-};
+/* ----- 선언 공간 ----- */
+// 매크로 상수
+
+// 구조 선언 (typedef / struct / enum / union ...)
+
+// 전역 변수
 
 // ------ 끝 ----------
 
@@ -36,23 +34,34 @@ struct score
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct score yuni = {90, 80, 70};
-    struct score *ps = &yuni;
+    int *pi = NULL;
+    int count = 0;
 
-    /*        입 력       */
-
+    printf("malloc 갯수 입력 : ");
+    if (scanf("%d", &count) != 1 || count <= 0)
+    {
+        printf("올바른 양의 정수를 입력하세요.\n");
+        return 1;
+    }
+    pi = (int *)malloc((size_t)count * sizeof(int));
+    if (!pi)
+    {
+        printf("메모리 할당 실패\n");
+        return 1;
+    }
     /*        처 리       */
+    for (int i = 0; i < count; i++)
+    {
+        pi[i] = i;
+        printf("pi[%d] addr=%p , val=%d\n", i, &pi[i], pi[i]);
+    }
 
     /*        출 력       */
-    printf("국어 : %d\n", (*ps).kor);
-    printf("국어 : %d\n", yuni.kor);
-    yuni.kor = 100; // side effect : 부작용
-    //(*yuni).kor = 200; // 원본 수정 side effect
-
-    printf("영어 : %d\n", ps->eng);
-    printf("수학 : %d\n", ps->math);
 
     /* 함수 종료 */
+
+    free(pi);
+
     return 0;
 }
 

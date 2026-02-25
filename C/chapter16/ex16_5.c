@@ -1,8 +1,8 @@
 /*
-    제작 시간 : 0223_15:18
+    제작 시간 : 0225_11:39
     유형 : 예제
-    주제 : 구조체 포인터와 -> 연산자
-    문제 설명: 구조체 포인터의 사용
+    주제 : 동적할당 저장한 문자열을 함수로 처리하는 예
+    문제 설명: 동적 할당 영역의 문자열을  ㅂ
     -
 */
 
@@ -21,14 +21,12 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-// ------- 시작 ----------
-struct score
-{
-    int kor;
-    int eng;
-    int math;
-};
+/* ----- 선언 공간 ----- */
+// 매크로 상수
+
+// 구조 선언 (typedef / struct / enum / union ...)
+
+// 전역 변수
 
 // ------ 끝 ----------
 
@@ -36,21 +34,12 @@ struct score
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct score yuni = {90, 80, 70};
-    struct score *ps = &yuni;
 
     /*        입 력       */
 
     /*        처 리       */
 
     /*        출 력       */
-    printf("국어 : %d\n", (*ps).kor);
-    printf("국어 : %d\n", yuni.kor);
-    yuni.kor = 100; // side effect : 부작용
-    //(*yuni).kor = 200; // 원본 수정 side effect
-
-    printf("영어 : %d\n", ps->eng);
-    printf("수학 : %d\n", ps->math);
 
     /* 함수 종료 */
     return 0;

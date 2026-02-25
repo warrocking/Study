@@ -31,9 +31,9 @@ struct address
     char address[80];
 };
 
-void print_list(struct address *lp)
+void print_list(const /*const를 쓰는 이유는 값을 바꾸지 않으니까*/ struct address *lp, int count)
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < count; i++)
     {
         printf("%s\t%d\t%s\t%s\n",
                (lp + i)->name,
@@ -58,7 +58,7 @@ int main(void)
     /*        입 력       */
 
     /*        처 리       */
-    print_list(list);
+    print_list(list, (int)(sizeof(list) / sizeof(list[0])));
 
     /*        출 력       */
 

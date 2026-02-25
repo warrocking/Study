@@ -23,7 +23,7 @@
 
 /* 함수 선언 공간 */
 // ------- 시작 ----------
-struct address
+struct Address
 {
     char name[20];
     int age;
@@ -36,12 +36,14 @@ struct address
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct address list[5] = {
+    struct Address list[5] = {
         {"홍길동", 23, "111-1111", "울릉도-독도"},
         {"이순신", 35, "222-2222", "서울 건천동"},
         {"장보고", 19, "333-3333", "완도 강해진"},
         {"유관순", 15, "444-4444", "충남 천안"},
         {"안중근", 45, "555-5555", "황해도 해주"}};
+
+    struct Address ptr;
 
     /*        입 력       */
     for (int i = 0; i < (int)(sizeof(list) / sizeof(list[0])); i++)
@@ -50,7 +52,7 @@ int main(void)
     }
     printf("\n");
 
-    struct address *plist = list;
+    struct Address *plist = list;
     for (int i = 0; i < (int)(sizeof(list) / sizeof(list[0])); i++)
     {
         printf("%s\t%d\t%s\t%s\n", plist[i].name, plist[i].age, plist[i].tel, plist[i].address);

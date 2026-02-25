@@ -30,7 +30,11 @@ struct list
     int num;
     struct list *next; // 자기 자신을 가르키는 구조체   //자기 참조 구조체
 };
-
+// struct Node
+// {
+//     int data;
+//     struct Node *next;
+// };
 // 전역 변수
 
 // ------ 끝 ----------
@@ -38,13 +42,27 @@ struct list
 /* 메인 함수 정의 */
 int main(void)
 {
+    // struct Node *head;
+    // struct Node node1;
+    // node1.data = 10;
+    // node1.next = NULL;
+    // head->next = &node1;
+    // struct Node node2;
+    // node2.data = 20;
+    // node2.next = NULL;
+    // node1.next = &node2;
+    // struct Node node3;
+    // node3.data = 30;
+    // node3.next = NULL;
+    // node2.next = &node3;
+
     /* 변수 선언 및 초기화 */
     struct list a = {10, NULL},
                 b = {20, NULL},
                 c = {30, NULL};
     struct list *head = &a, *current;
 
-    a.next = &b;
+    a.next = &b; // next = 자기 참조 구조체
     b.next = &c;
     c.next = 0;
     /*        입 력       */

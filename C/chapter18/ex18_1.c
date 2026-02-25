@@ -1,8 +1,8 @@
 /*
-    제작 시간 : 0223_15:18
+    제작 시간 : 0225_17:01
     유형 : 예제
-    주제 : 구조체 포인터와 -> 연산자
-    문제 설명: 구조체 포인터의 사용
+    주제 : 파일 개방과 입출력
+    문제 설명: 파일을 열고 닫는 프로그램
     -
 */
 
@@ -21,14 +21,12 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-// ------- 시작 ----------
-struct score
-{
-    int kor;
-    int eng;
-    int math;
-};
+/* ----- 선언 공간 ----- */
+// 매크로 상수
+
+// 구조 선언 (typedef / struct / enum / union ...)
+
+// 전역 변수
 
 // ------ 끝 ----------
 
@@ -36,21 +34,42 @@ struct score
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct score yuni = {90, 80, 70};
-    struct score *ps = &yuni;
+    FILE *fp;
 
     /*        입 력       */
+    fp = fopen("a.txt", "r");
 
     /*        처 리       */
+    if (fp == NULL)
+    {
+        printf("파일이 열리지 않았습니다.\n");
+        return 1;
+    }
+
+    printf("파일이 열렸습니다.\n");
+
+    int ch;
+    char buf[1024];
+    size_t n;
+    while ((n = fread(buf, 1, sizeof buf, fp)) > 0)
+    {
+        fwrite(buf, 1, n, stdout);
+    }
+
+    // char buf[256];
+    // while (fgets(buf, sizeof buf, fp) != NULL)
+    // {
+    //     fputs(buf, stdout);
+    // }
+
+    // int ch;
+    // while ((ch = fgetc(fp)) != EOF)
+    // {
+    //     putc(ch, stdout);
+    // }
+    fclose(fp);
 
     /*        출 력       */
-    printf("국어 : %d\n", (*ps).kor);
-    printf("국어 : %d\n", yuni.kor);
-    yuni.kor = 100; // side effect : 부작용
-    //(*yuni).kor = 200; // 원본 수정 side effect
-
-    printf("영어 : %d\n", ps->eng);
-    printf("수학 : %d\n", ps->math);
 
     /* 함수 종료 */
     return 0;
