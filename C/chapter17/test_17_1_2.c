@@ -1,10 +1,13 @@
 /*
-    제작 시간 : 0223_14:02
-    유형 : 예제
-    제목 : 구조체 변수를 함수의 매개변수에 사용하기
-
-    문제 설명
-    - 구조체를 반환하여 두 변수의 값 교환
+    제작 시간 : 0225_19:43
+    유형 : 연습
+    주제 : p519 2
+    문제 설명: 크래커의 가격(price)과 열량(calories)을 저장할 cracker 구조체를 선언합니다.
+    - 그리고 그 구조체로 변수를 선언하고 가격과 열량을 키보드로 입력하면 입력값을 화면에 출력하는 프로그램을 작성.
+    -
+    - 바사삭의 가격과 열량을 입력하시오 : 1200 500
+    - 바사삭의 가격 : 1200원
+    - 바사삭의 열량 : 500kcal
 */
 
 #ifdef _MSC_VER
@@ -22,48 +25,35 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-struct vision
-{
-    double left;
-    double right;
-};
-struct vision exchange(struct vision robot) // 좌우 시력 변경
-{
-    double temp;
+/* ----- 선언 공간 ----- */
+// 매크로 상수
 
-    temp = robot.left;
-    robot.left = robot.right;
-    robot.right = temp;
-
-    return robot;
-};
-struct vision exchanges(struct vision *robot)
+// 구조 선언 (typedef / struct / enum / union ...)
+struct cracker
 {
-    double *temp;
-    temp = &(robot->left);
-    robot->left = robot->right;
-    robot->right = *temp;
-}
+    int price;
+    double calories;
+};
+
+// 전역 변수
+
+// ------ 끝 ----------
+
 /* 메인 함수 정의 */
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct vision robot;
+    struct cracker cookie;
+
     /*        입 력       */
-    printf("시력 입력\n");
-    printf("좌측 : ");
-    scanf("%lf", &(robot.left));
-    printf("우측 : ");
-    scanf("%lf", &(robot.right));
+    printf("바사삭의 가격과 열량을 입력하세오 : ");
+    scanf("%d %.1lf", &cookie.price, &cookie.calories);
 
     /*        처 리       */
-    robot = exchange(robot);
 
     /*        출 력       */
-    printf("바뀐 시력\n");
-    printf("좌측 : %.1lf\n", robot.left);
-    printf("우측 : %.1lf\n", robot.right);
+    printf("바사삭의 가격 : %d원\n", cookie.price);
+    printf("바사삭의 열량 : %.1lfkcal\n", cookie.calories);
 
     /* 함수 종료 */
     return 0;

@@ -24,11 +24,39 @@
 
 /* 함수 선언 공간 */
 // ------- 시작 ----------
-struct student
+// struct student
+// {
+//     int id;
+//     double grade;
+// };
+
+// // ------ 끝 ----------
+
+// /* 메인 함수 정의 */
+// int main(void)
+// {
+//     /* 변수 선언 및 초기화 */
+//     struct student s1;
+
+//     /*        입 력       */
+//     s1.id = 2;
+//     s1.grade = 4.5;
+
+//     /*        처 리       */
+
+//     /*        출 력       */
+//     printf("학번 : %d\n", s1.id);
+//     printf("학점 : %.1lf\n", s1.grade);
+
+//     /* 함수 종료 */
+//     return 0;
+// }
+
+typedef struct Student
 {
     int id;
     double grade;
-};
+} Student;
 
 // ------ 끝 ----------
 
@@ -36,11 +64,14 @@ struct student
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct student s1;
-
+    Student s1;
+    Student *p_s1 = &s1;
     /*        입 력       */
-    s1.id = 2;
+
+    s1.id = 2; // 일반변수 일때는 그냥 = 만 쓰기
     s1.grade = 4.5;
+    p_s1->id = 2.5; // 포인터 변수일떄는 -> 사용가능
+    p_s1->grade = 3.5;
 
     /*        처 리       */
 
@@ -51,5 +82,3 @@ int main(void)
     /* 함수 종료 */
     return 0;
 }
-
-/* 함수 정의 공간 */

@@ -1,10 +1,9 @@
 /*
-    제작 시간 : 0223_14:02
-    유형 : 예제
-    제목 : 구조체 변수를 함수의 매개변수에 사용하기
-
-    문제 설명
-    - 구조체를 반환하여 두 변수의 값 교환
+    제작 시간 : 0225_19:53
+    유형 : 연습
+    주제 : p538 2
+    문제 설명:
+    - 연결 리스트를 만들수 있도록 코드 제작
 */
 
 #ifdef _MSC_VER
@@ -22,48 +21,43 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-struct vision
-{
-    double left;
-    double right;
-};
-struct vision exchange(struct vision robot) // 좌우 시력 변경
-{
-    double temp;
+/* ----- 선언 공간 ----- */
+// 매크로 상수
 
-    temp = robot.left;
-    robot.left = robot.right;
-    robot.right = temp;
+// 구조 선언 (typedef / struct / enum / union ...)
+typedef struct train Train;
 
-    return robot;
-};
-struct vision exchanges(struct vision *robot)
+struct train
 {
-    double *temp;
-    temp = &(robot->left);
-    robot->left = robot->right;
-    robot->right = *temp;
-}
+    int seats;
+    struct train *next;
+};
+
+// 전역 변수
+
+// ------ 끝 ----------
+
 /* 메인 함수 정의 */
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct vision robot;
+    Train *head = NULL, *tail = NULL;
     /*        입 력       */
-    printf("시력 입력\n");
-    printf("좌측 : ");
-    scanf("%lf", &(robot.left));
-    printf("우측 : ");
-    scanf("%lf", &(robot.right));
 
     /*        처 리       */
-    robot = exchange(robot);
-
+    for (int i = 0; i < 5; i++)
+    {
+        if (head == NULL)
+        {
+            head = tail = (Train *)malloc(sizeof(Train));
+        }
+        else
+        {
+            tail->next = (Train *)malloc(sizeof(Train));
+            tail = tail->next;
+        }
+    }
     /*        출 력       */
-    printf("바뀐 시력\n");
-    printf("좌측 : %.1lf\n", robot.left);
-    printf("우측 : %.1lf\n", robot.right);
 
     /* 함수 종료 */
     return 0;

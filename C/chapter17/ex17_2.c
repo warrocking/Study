@@ -24,6 +24,8 @@
 
 /* 함수 선언 공간 */
 // ------- 시작 ----------
+static void trim_newline(char *s);
+
 struct profil
 {
     char name[80];
@@ -39,24 +41,58 @@ int main(void)
 {
     /* 변수 선언 및 초기화 */
     struct profil yuni;
+    const size_t intro_size = 80;
 
     /*        입 력       */
-    strcpy(yuni.name, "서하윤");
-    yuni.age = 17;
-    yuni.height = 164.5;
-    /*        처 리       */
-    yuni.intro = (char *)malloc(sizeof(char) * 80);
-    printf("자기 소개 : ");
-    fgets(yuni.intro, sizeof(yuni.intro), stdin);
+    // strcpy(yuni.name, "서하윤");
+    printf("이름 : ");
+    fgets(yuni.name, sizeof(yuni.name), stdin);
+    trim_newline(yuni.name);
 
+    printf("나이 : ");
+    scanf("%d", &yuni.age);
+
+    printf("몸무게 : ");
+    scanf("%lf", &yuni.height);
+    // yuni.age = 17;
+    // yuni.height = 164.5;
+    /*        처 리       */
+    yuni.intro = (char *)malloc(sizeof(char) * intro_size);
+    if (yuni.intro == NULL)
+    {
+        return 1;
+    }
+    printf("자기 소개 : ");
+    {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF)
+        {
+        }
+    }
+    fgets(yuni.intro, intro_size, stdin);
+    trim_newline(yuni.intro);
     /*        출 력       */
-    printf("항상 행복하세]요.\n");
+    printf("항상 행복하세요.\n");
     printf("이름 : %s\n", yuni.name);
     printf("나이 : %d\n", yuni.age);
     printf("키 : %.1lf\n", yuni.height);
     printf("자기소개 : %s\n", yuni.intro);
+    free(yuni.intro);
     /* 함수 종료 */
     return 0;
 }
 
 /* 함수 정의 공간 */
+static void trim_newline(char *s) // 입력버퍼 제거 공간
+{
+    size_t len;
+    if (s == NULL)
+    {
+        return;
+    }
+    len = strlen(s);
+    if (len > 0 && s[len - 1] == '\n')
+    {
+        s[len - 1] = '\0';
+    }
+}

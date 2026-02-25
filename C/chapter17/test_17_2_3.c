@@ -1,10 +1,9 @@
 /*
-    제작 시간 : 0223_14:02
-    유형 : 예제
-    제목 : 구조체 변수를 함수의 매개변수에 사용하기
-
-    문제 설명
-    - 구조체를 반환하여 두 변수의 값 교환
+    제작 시간 : 0225_20:00
+    유형 : 연습
+    주제 : p539 3
+    문제 설명:
+    - 코드 실행해보기
 */
 
 #ifdef _MSC_VER
@@ -22,49 +21,63 @@
 // #include <stdbool.h>   // bool 타입(C99+)    // bool ok = true;
 // #include <time.h>      // 시간/난수 시드      // time, clock // 예: srand((unsigned)time(NULL));
 
-/* 함수 선언 공간 */
-struct vision
-{
-    double left;
-    double right;
-};
-struct vision exchange(struct vision robot) // 좌우 시력 변경
-{
-    double temp;
+/* ----- 선언 공간 ----- */
+// 매크로 상수
 
-    temp = robot.left;
-    robot.left = robot.right;
-    robot.right = temp;
-
-    return robot;
-};
-struct vision exchanges(struct vision *robot)
+// 구조 선언 (typedef / struct / enum / union ...)
+typedef enum
 {
-    double *temp;
-    temp = &(robot->left);
-    robot->left = robot->right;
-    robot->right = *temp;
-}
+    CYAN,
+    MAGENTA,
+    YELLOW = 5,
+    BLACK
+} COLOR;
+typedef enum
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+} ARROW;
+
+// 전역 변수
+
+// ------ 끝 ----------
+
 /* 메인 함수 정의 */
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    struct vision robot;
+    COLOR my_color = YELLOW, c;
+    ARROW direction = UP;
+
     /*        입 력       */
-    printf("시력 입력\n");
-    printf("좌측 : ");
-    scanf("%lf", &(robot.left));
-    printf("우측 : ");
-    scanf("%lf", &(robot.right));
 
     /*        처 리       */
-    robot = exchange(robot);
+    for (c = CYAN; c <= BLACK; c++)
+    {
+        direction++;
+        direction = direction % 4;
+        if (c == my_color)
+            break;
+    }
 
     /*        출 력       */
-    printf("바뀐 시력\n");
-    printf("좌측 : %.1lf\n", robot.left);
-    printf("우측 : %.1lf\n", robot.right);
-
+    switch (direction)
+    {
+    case UP:
+        printf("현재 방향 : 위");
+        break;
+    case DOWN:
+        printf("현재 방향 : 아래");
+        break;
+    case LEFT:
+        printf("현재 방향 : 왼쪽");
+        break;
+    case RIGHT:
+        printf("현재 방향 : 오른쪽");
+        break;
+    }
     /* 함수 종료 */
     return 0;
 }

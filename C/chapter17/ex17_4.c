@@ -12,9 +12,9 @@
 #endif
 
 // 기본 헤더 파일
-#include <stdio.h>   // 입출력            // printf("%d\n", x); scanf("%d", &x);
-#include <string.h>  // 문자열            // strlen, strcmp, strcpy, strncpy, strcat, strncat, memset // 예: strcpy(dst, src);
-#include <stdlib.h>  // 메모리/변환/유틸   // malloc, calloc, free, atoi, strtol, qsort, bsearch, rand, srand // 예: int* p = malloc(sizeof(int) * n);
+#include <stdio.h>  // 입출력            // printf("%d\n", x); scanf("%d", &x);
+#include <string.h> // 문자열            // strlen, strcmp, strcpy, strncpy, strcat, strncat, memset // 예: strcpy(dst, src);
+#include <stdlib.h> // 메모리/변환/유틸   // malloc, calloc, free, atoi, strtol, qsort, bsearch, rand, srand // 예: int* p = malloc(sizeof(int) * n);
 
 // 추가 헤더 파일 (필요 시 주석 제거 후 사용)
 // #include <math.h>     // 수학             // sqrt, pow, fabs, floor, ceil // 예: double r = sqrt(x);
@@ -25,8 +25,8 @@
 /* 함수 선언 공간 */
 struct student
 {
-    int    id;
-    char   name[40];
+    int id;
+    char name[40];
     double grade;
 };
 
@@ -37,7 +37,7 @@ int main(void)
     struct student s1 = {315, "홍길동", 2.4},
                    s2 = {316, "이순신", 3.7},
                    s3 = {317, "세종대왕", 4.4};
-    struct student max;
+    struct student max; // 최초 정보 저장 및 최고 점수 정보 저장공간
     /*        입 력       */
     max = s1;
     /*        처 리       */
