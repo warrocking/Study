@@ -24,18 +24,27 @@
 
 /* ----- 선언 공간 ----- */
 // 매크로 상수
+#define STUDENT_COUNT 5
+#define SUBJECT_COUNT 3
 
 // 구조 선언 (typedef / struct / enum / union ...)
 typedef struct Student
 {
     int num;       // 학번
     char name[80]; // 이름
-    int score[3];  // 0번 국어 , 1번 영어 , 2번 수학
+    int score[SUBJECT_COUNT]; // 0번 국어 , 1번 영어 , 2번 수학
     double avg;    // 평균
     char grade;    // 학점
 } student;
 
 // 전역 변수
+
+// 함수 프로토타입
+static int read_student(student *s);
+static void calc_avg_grade(student *s);
+static void print_header(void);
+static void print_list(const student *list, size_t count);
+static int compare_avg_desc(const void *a, const void *b);
 
 // ------ 끝 ----------
 
@@ -43,94 +52,118 @@ typedef struct Student
 int main(void)
 {
     /* 변수 선언 및 초기화 */
-    student student_before[5];
-    student student_after[5];
-    student max; // 최고 점수 학생 정보 저장
-    /*        입 력       */
-    for (int i = 0; i < 5; i++)
+    student *list = (student *)malloc(sizeof(*list) * STUDENT_COUNT);
+    if (!list)
     {
-        printf("학번 : ");
-        scanf("%d", &student_before[i].num);
-        printf("이름 : ");
-        scanf("%s", student_before[i].name);
-        printf("국어 : ");
-        scanf("%d", &student_before[i].score[0]);
-        printf("영어 : ");
-        scanf("%d", &student_before[i].score[1]);
-        printf("수학 : ");
-        scanf("%d", &student_before[i].score[2]);
+        printf("메모리 할당 실패\n");
+        return 1;
+    }
 
-        printf("\n");
+    /*        입 력       */
+    for (int i = 0; i < STUDENT_COUNT; i++)
+    {
+        if (!read_student(&list[i]))
+        {
+            printf("입력 오류\n");
+            free(list);
+            return 1;
+        }
     }
 
     /*        처 리       */
-    for (int i = 0; i < sizeof(student_before) / sizeof(student); i++)
+    for (int i = 0; i < STUDENT_COUNT; i++)
     {
-        student_before[i].avg = (student_before[i].score[0] + student_before[i].score[1] + student_before[i].score[2]) / 3.0;
-
-        if (student_before[i].avg >= 90.0)
-            student_before[i].grade = 'A';
-        else if (student_before[i].avg >= 80.0)
-            student_before[i].grade = 'B';
-        else if (student_before[i].avg >= 70.0)
-            student_before[i].grade = 'C';
-        else
-            student_before[i].grade = 'F';
+        calc_avg_grade(&list[i]);
     }
     /*        출 력       */
     printf("# 정렬 전 데이터.........\n");
-    for (int i = 0; i < sizeof(student_before) / sizeof(student_before[0]); i++)
-    {
-        printf("학번\t이름\t국어\t영어\t수학\t평균\t학점\n");
-        printf("%d\t %s\t %d\t %d\t %d\t %.1lf\t %c\n",
-               student_before[i].num,
-               student_before[i].name,
-               student_before[i].score[0],
-               student_before[i].score[1],
-               student_before[i].score[2],
-               student_before[i].avg,
-               student_before[i].grade);
-    }
-    // 정렬용 배열 복사
-    for (int i = 0; i < sizeof(student_before) / sizeof(student_before[0]); i++)
-    {
-        student_after[i] = student_before[i];
-    }
+    print_list(list, STUDENT_COUNT);
 
-    // 평균 내림차순 정렬(선택 정렬)
-    for (int i = 0; i < sizeof(student_after) / sizeof(student_after[0]); i++)
-    {
-        int max_idx = i;
-        for (int j = i + 1; j < sizeof(student_after) / sizeof(student_after[0]); j++)
-        {
-            if (student_after[j].avg > student_after[max_idx].avg)
-            {
-                max_idx = j;
-            }
-        }
-        if (max_idx != i)
-        {
-            student temp = student_after[i];
-            student_after[i] = student_after[max_idx];
-            student_after[max_idx] = temp;
-        }
-    }
+    // 평균 내림차순 정렬
+    qsort(list, STUDENT_COUNT, sizeof(list[0]), compare_avg_desc);
+
     printf("# 정렬 후 데이터.........\n");
-    for (int i = 0; i < sizeof(student_after) / sizeof(student_after[0]); i++)
-    {
-        printf("학번\t이름\t국어\t영어\t수학\t평균\t학점\n");
-        printf("%d\t %s\t %d\t %d\t %d\t %.1lf\t %c\n",
-               student_after[i].num,
-               student_after[i].name,
-               student_after[i].score[0],
-               student_after[i].score[1],
-               student_after[i].score[2],
-               student_after[i].avg,
-               student_after[i].grade);
-    }
+    print_list(list, STUDENT_COUNT);
 
     /* 함수 종료 */
+    free(list);
     return 0;
 }
 
 /* 함수 정의 공간 */
+static int read_student(student *s)
+{
+    printf("학번 : ");
+    if (scanf("%d", &s->num) != 1)
+    {
+        return 0;
+    }
+    printf("이름 : ");
+    if (scanf("%79s", s->name) != 1)
+    {
+        return 0;
+    }
+    printf("국어 : ");
+    if (scanf("%d", &s->score[0]) != 1)
+    {
+        return 0;
+    }
+    printf("영어 : ");
+    if (scanf("%d", &s->score[1]) != 1)
+    {
+        return 0;
+    }
+    printf("수학 : ");
+    if (scanf("%d", &s->score[2]) != 1)
+    {
+        return 0;
+    }
+    printf("\n");
+    return 1;
+}
+
+static void calc_avg_grade(student *s)
+{
+    s->avg = (s->score[0] + s->score[1] + s->score[2]) / 3.0;
+
+    if (s->avg >= 90.0)
+        s->grade = 'A';
+    else if (s->avg >= 80.0)
+        s->grade = 'B';
+    else if (s->avg >= 70.0)
+        s->grade = 'C';
+    else
+        s->grade = 'F';
+}
+
+static void print_header(void)
+{
+    printf("학번\t이름\t국어\t영어\t수학\t평균\t학점\n");
+}
+
+static void print_list(const student *list, size_t count)
+{
+    print_header();
+    for (size_t i = 0; i < count; i++)
+    {
+        printf("%d\t %s\t %d\t %d\t %d\t %.1lf\t %c\n",
+               list[i].num,
+               list[i].name,
+               list[i].score[0],
+               list[i].score[1],
+               list[i].score[2],
+               list[i].avg,
+               list[i].grade);
+    }
+}
+
+static int compare_avg_desc(const void *a, const void *b)
+{
+    const student *sa = (const student *)a;
+    const student *sb = (const student *)b;
+    if (sa->avg < sb->avg)
+        return 1;
+    if (sa->avg > sb->avg)
+        return -1;
+    return 0;
+}
