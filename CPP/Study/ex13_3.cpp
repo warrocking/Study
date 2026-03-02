@@ -1,10 +1,16 @@
 /*
-   제작 시간 : 0226_17:02
+   제작 시간 : 0227_14:14
     유형 : 예제
-    주제 : goto 함수 / while문
+    주제 : 레퍼런스 변수와 Const, typedef
     문제 설명:
     -
 */
+struct Flags
+{
+    int a = 3;
+    int b = 4 int : 5;
+    bool c : 1
+};
 
 #include <iostream>
 // 필요할 때만 주석 해제:
@@ -12,6 +18,10 @@
 // #include <vector>    // std::vector 사용 시
 // #include <algorithm> // sort, max, min 등
 // #include <cmath>     // 수학 함수
+using UC_PTR = unsigned char *;
+using UINT = unsigned int;
+typedef long long LLONG;
+typedef unsigned long long ULLONG;
 
 using namespace std;
 
@@ -23,27 +33,16 @@ int main()
     cin.tie(nullptr);
 
     // 변수 선언 및 초기화
-    goto ILOVEYOU;
-    cout << "출력되지 않아야 하는 문자열";
-// 데이터 준비 및 입력
-ILOVEYOU:
-    cout << "I LOVE YOU\n";
+    typedef unsigned char *uc_ptr;
+    unsigned char ui = 'A';
+    uc_ptr p = &uc;
 
-    cout << "\n\n\n";
-    int count;
-    int sum = 0;
-    int i = 1;
-    cout << "몇까지의 합 : ";
-    cin >> count;
-
-    while (i <= count)
-    {
-        sum += i;
-        i++;
-    }
-    cout << "현재 i의 값 : " << i << "\n";
-    cout << "현재 sum의 값 : " << sum << "\n";
-    // 로직 처리
+    // 데이터 준비 및 입력
+    char c = '1';
+    char *pc = &c;
+    char **pp = &pc;
+    // if(*ppc - pc)
+    //  로직 처리
 
     // 결과 출력
 

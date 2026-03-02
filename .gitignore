@@ -1,5 +1,25 @@
-# Build artifacts
+﻿# Build artifacts
 *.exe
 *.obj
 *.pdb
 *.ilk
+
+# CMake / build output
+**/build/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
+
+# Visual Studio / MSBuild
+**/.vs/
+**/*.sln
+**/*.slnx
+**/*.vcxproj
+**/*.vcxproj.filters
+**/*.vcxproj.user
+**/*.VC.db
+**/*.VC.opendb
+**/*.tlog
+**/*.recipe
+**/*.lastbuildstate

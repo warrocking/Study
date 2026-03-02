@@ -1,0 +1,97 @@
+{
+  "count": 4,
+  "receipts": [
+    {
+      "amount": 38000,
+      "count": 1,
+      "datetime": "2026-03-03 00:31",
+      "items": [
+        {
+          "category": "술",
+          "name": "사케",
+          "qty": 1
+        },
+        {
+          "category": "밥",
+          "name": "백반",
+          "qty": 1
+        },
+        {
+          "category": "반찬",
+          "name": "돼지고기 두루치기",
+          "qty": 1
+        },
+        {
+          "category": "반찬",
+          "name": "콩나물 무침",
+          "qty": 2
+        },
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 1
+        }
+      ],
+      "method": "현대카드(1011)"
+    },
+    {
+      "amount": 25200,
+      "count": 2,
+      "datetime": "2026-03-03 00:32",
+      "items": [
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 1
+        },
+        {
+          "category": "반찬",
+          "name": "돼지고기 수육",
+          "qty": 1
+        },
+        {
+          "category": "밥",
+          "name": "비빔밥",
+          "qty": 1
+        },
+        {
+          "category": "술",
+          "name": "카스",
+          "qty": 1
+        }
+      ],
+      "method": "현금"
+    },
+    {
+      "amount": 6000,
+      "count": 3,
+      "datetime": "2026-03-03 01:05",
+      "items": [
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 1
+        }
+      ],
+      "method": "삼성카드(2011)"
+    },
+    {
+      "amount": 13500,
+      "count": 4,
+      "datetime": "2026-03-03 02:01",
+      "items": [
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 2
+        },
+        {
+          "category": "반찬",
+          "name": "김치",
+          "qty": 1
+        }
+      ],
+      "method": "현금"
+    }
+  ]
+}

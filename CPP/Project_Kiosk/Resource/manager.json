@@ -1,0 +1,17 @@
+{
+  "last_update": "2026-02-27",
+  "managers": [
+    {
+      "id": "admin",
+      "pw": "1234"
+    },
+    {
+      "id": "manager",
+      "pw": "abcd"
+    },
+    {
+      "id": "newuser",
+      "pw": "9999"
+    }
+  ]
+}

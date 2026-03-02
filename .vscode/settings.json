@@ -1,16 +1,17 @@
-﻿{
-    "git.useEditorAsCommitInput":  true,
-    "terminal.external.windowsExec":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-    "files.exclude":  {
-                          "**/*.exe":  true,
-                          "**/*.obj":  true,
-                          "**/*.pdb":  true,
-                          "**/*.ilk":  true
-                      },
-    "search.exclude":  {
-                           "**/*.exe":  true,
-                           "**/*.obj":  true,
-                           "**/*.pdb":  true,
-                           "**/*.ilk":  true
-                       }
+{
+    "git.useEditorAsCommitInput": true,
+    "terminal.external.windowsExec": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "files.exclude": {
+        "**/*.exe": true,
+        "**/*.obj": true,
+        "**/*.pdb": true,
+        "**/*.ilk": true
+    },
+    "search.exclude": {
+        "**/*.exe": true,
+        "**/*.obj": true,
+        "**/*.pdb": true,
+        "**/*.ilk": true
+    },
+    "cmake.sourceDirectory": "C:/Study/CPP/Project_Kiosk"
 }

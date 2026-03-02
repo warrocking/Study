@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ProjectManager (CMake)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "C:\\Study\\CPP\\Project_Kiosk\\build\\Debug\\ProjectManager.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "C:\\Study\\CPP\\Project_Kiosk",
+            "environment": [],
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake: ProjectManager 빌드"
+        }
+    ]
+}

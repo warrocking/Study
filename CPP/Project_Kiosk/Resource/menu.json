@@ -1,0 +1,47 @@
+{
+  "categories": [
+    {
+      "name": "국",
+      "items": [
+        { "name": "된장국", "price": 6000 },
+        { "name": "미역국", "price": 6000 },
+        { "name": "소고기무국", "price": 7000 },
+        { "name": "시래기국", "price": 5000 },
+        { "name": "황태국", "price": 5500 }
+      ]
+    },
+    {
+      "name": "반찬",
+      "items": [
+        { "name": "김치", "price": 3000 },
+        { "name": "달걀 프라이", "price": 5000 },
+        { "name": "돈까스", "price": 8000 },
+        { "name": "돼지고기 두루치기", "price": 9000 },
+        { "name": "돼지고기 수육", "price": 10000 },
+        { "name": "멧돼지고기", "price": 9000 },
+        { "name": "소고기", "price": 10000 },
+        { "name": "오징어", "price": 7000 },
+        { "name": "콩나물 무침", "price": 4000 }
+      ]
+    },
+    {
+      "name": "밥",
+      "items": [
+        { "name": "백반", "price": 5000 },
+        { "name": "볶음밥", "price": 6500 },
+        { "name": "비빔밥", "price": 7000 },
+        { "name": "오므라이스", "price": 6000 },
+        { "name": "카레라이스", "price": 6500 }
+      ]
+    },
+    {
+      "name": "술",
+      "items": [
+        { "name": "사케", "price": 10000 },
+        { "name": "생맥주", "price": 5000 },
+        { "name": "소주", "price": 5000 },
+        { "name": "카스", "price": 5000 }
+      ]
+    }
+  ]
+}

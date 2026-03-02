@@ -8,6 +8,7 @@
                 "/Zi",
                 "/EHsc",
                 "/nologo",
+                "/std:c++17",
                 "/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "${file}"
             ],
@@ -22,6 +23,25 @@
                 "isDefault": true
             },
             "detail": "디버거에서 생성된 작업입니다."
+        },
+        {
+            "label": "CMake: ProjectManager 빌드",
+            "type": "shell",
+            "command": "C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "& \"C:\\\\Program Files\\\\CMake\\\\bin\\\\cmake.exe\" -S \"C:\\\\Study\\\\CPP\\\\Project_Kiosk\" -B \"C:\\\\Study\\\\CPP\\\\Project_Kiosk\\\\build\"; & \"C:\\\\Program Files\\\\CMake\\\\bin\\\\cmake.exe\" --build \"C:\\\\Study\\\\CPP\\\\Project_Kiosk\\\\build\" --config Debug"
+            ],
+            "options": {
+                "cwd": "C:\\\\Study\\\\CPP\\\\Project_Kiosk"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "detail": "CMake로 ProjectManager를 구성/빌드합니다."
         },
         {
             "label": "Git: Auto Split Commit (C files)",
