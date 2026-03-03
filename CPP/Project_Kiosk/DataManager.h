@@ -6,11 +6,14 @@
 namespace data
 {
     // JSON 유틸 모듈 (선언)
-    // - manager.json, menu.json 등 리소스 JSON 입출력 함수 제공
+    // - access_control.json, menu.json 등 리소스 JSON 입출력 함수 제공
     // - 다른 모듈(Login/Display/Shopping)에서 include하여 사용
     //
-    // manager.json 예시:
-    // { "managers": [ {"id":"admin","pw":"1234"}, ... ], "last_update":"YYYY-MM-DD" }
+    // access_control.json 예시:
+    // {
+    //   "users":[{"id":"master","pw":"0000","role":"master"}],
+    //   "roles":{"master":["menu_manage","sales_view","sales_manage","user_manage","sales_start","system_manage"]}
+    // }
     //
     // menu.json 예시(배열 구조):
     // { "categories":[ {"name":"국","items":[{"name":"된장국","price":6000}, ...]}, ... ] }
@@ -19,8 +22,8 @@ namespace data
     using json = nlohmann::json;
 
     // ---- Json 경로 선언 위치 ----
-    // 로그인 계정 정보(JSON)
-    extern const std::string path_LoginIDPW;
+    // 로그인/권한 정보(JSON)
+    extern const std::string path_AccessControl;
     // 메뉴 정보(JSON)
     extern const std::string path_MenuData;
 

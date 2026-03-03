@@ -3,7 +3,8 @@
    유형 : 과제
    주제 : 키오스크 만들기 - 관리자 로그인
    설명 :
-   - manager.json의 ID/PW를 읽어 로그인 입력과 비교한다.
+   - access_control.json의 ID/PW를 읽어 로그인 입력과 비교한다.
+   - 로그인 성공 시 역할(role)과 권한 목록(permissions)을 함께 반환한다.
    - 실패 시 횟수를 누적하며, 3회 실패하면 LoginError.json에 기록 후 종료한다.
    - LoginError.json에는 실패 시간과 시도한 ID/PW 목록을 누적 저장한다.
 */
@@ -17,13 +18,14 @@
 
 #include "Login.h"       // 로그인 구조체/열거형 (IDPW, LoginResult)
 #include "DataManager.h" // JSON 읽기/쓰기 (data::ReadJsonFile, WriteJsonFile)
+#include "ConsoleUtil.h" // 입력 유틸 (ReadMaskedInput, ReadLineStrict)
 
 using namespace std;
 
 namespace login
 {
     // 데이터 흐름:
-    // - manager.json을 읽어 ID/PW 검증
+    // - access_control.json을 읽어 ID/PW 검증 및 권한 로드
     // - 3회 실패 시 LoginError.json에 시간/시도 기록 누적
     //
     // LoginError.json 예시:
@@ -35,19 +37,21 @@ namespace login
         std::string BuildLoginErrorTimestamp()
         {
             std::time_t now = std::time(nullptr);
-            std::tm local_tm{};
-#if defined(_WIN32)
-            localtime_s(&local_tm, &now);
+            std::tm localTm{};
+
+#if defined(_WIN32) // 실행 환경이 윈도우 일떄, 아닐떄의 차이에 맞춰 개발함.
+            localtime_s(&localTm, &now);
 #else
-            localtime_r(&now, &local_tm);
+            localtime_r(&now, &localTm);
 #endif
 
             std::ostringstream oss;
-            oss << (local_tm.tm_year + 1900) << "_"
-                << std::setw(2) << std::setfill('0') << (local_tm.tm_mon + 1) << "_"
-                << std::setw(2) << std::setfill('0') << local_tm.tm_mday << "_"
-                << std::setw(2) << std::setfill('0') << local_tm.tm_hour << ":"
-                << std::setw(2) << std::setfill('0') << local_tm.tm_min;
+            // 2026년 기준 localTm.tm_year = 126; 즉, 1900을 더해줘야함.             // 표기과정
+            oss << (localTm.tm_year + 1900) << "_"                                  // 2026_
+                << std::setw(2) << std::setfill('0') << (localTm.tm_mon + 1) << "_" // 2026_03_
+                << std::setw(2) << std::setfill('0') << localTm.tm_mday << "_"      // 2026_03_03_
+                << std::setw(2) << std::setfill('0') << localTm.tm_hour << ":"      // 2026_03_03_10:
+                << std::setw(2) << std::setfill('0') << localTm.tm_min;             // 2026_03_03_10:30
             return oss.str();
         }
 
@@ -83,7 +87,7 @@ namespace login
     } // namespace
 
     // 로그인 전체 흐름: 입력 -> 검증 -> 실패 누적 -> 3회 실패시 기록 후 종료
-    LoginResult Login_First()
+    AuthInfo Login_First() // 반환종류 : Success, Failed, DataError + 권한 정보
     {
         cout << "로그인 시스템 부팅......\n";
         cout << "로그인을 시작합니다.\n";
@@ -93,13 +97,15 @@ namespace login
         {
             IDPW idpw;
             Login_Input(idpw);
-            LoginResult result = Login_Check(idpw);
+            std::string role;
+            std::vector<std::string> perms;
+            LoginResult result = Login_Check(idpw, role, perms); // Json 데이터와의 비교 후 로그인 결과 반환
 
-            if (result == LoginResult::Success)
-                return LoginResult::Success;
+            if (result == LoginResult::Success) // 로그인 성공 시
+                return {LoginResult::Success, idpw.id, role, perms};
 
-            if (result == LoginResult::DataError)
-                return LoginResult::DataError;
+            if (result == LoginResult::DataError) // 로그인 데이터 '파일'이 문제 시 반환
+                return {LoginResult::DataError, "", "", {}};
 
             failedAttempts.push_back(idpw);
             failCount++;
@@ -107,10 +113,10 @@ namespace login
             {
                 AppendLoginErrorRecord(failedAttempts);
                 cout << "로그인 3회 이상 실패. 프로그램을 종료합니다.\n";
-                std::exit(1);
+                std::exit(1); // 강제 종료 (로그인 실패 시 프로그램이 더 이상 진행되지 않도록)
             }
         }
-        return LoginResult::Failed;
+        return {LoginResult::Failed, "", "", {}};
     }
     // 사용자로부터 ID/PW 입력
     void Login_Input(IDPW &idpw)
@@ -118,15 +124,20 @@ namespace login
         cout << "ID와 PW를 입력해주세요. \n"
              << "3번 이상 틀릴 시 프로그램이 자동 종료 및 오류 송출을 시작합니다.\n\n";
         cout << "ID : ";
-        cin >> idpw.id;
+        while (!ReadLineStrict(idpw.id))
+        {
+            cout << "ID : ";
+        }
         cout << "PW : ";
-        cin >> idpw.pw;
+        do
+        {
+            idpw.pw = ReadMaskedInput(0, false);
+        } while (idpw.pw.empty());
     }
-    // manager.json을 읽어 ID/PW 검증
-    LoginResult Login_Check(const IDPW &idpw)
+    // access_control.json을 읽어 ID/PW 검증 및 권한 로드
+    LoginResult Login_Check(const IDPW &idpw, std::string &outRole, std::vector<std::string> &outPerms)
     {
-        // const string path = "C:\\Study\\CPP\\Project_Kiosk\\Resource\\manager.json";
-        const string path = data::path_LoginIDPW;
+        const string path = data::path_AccessControl;
         data::json data;
         if (!data::ReadJsonFile(path, data))
         {
@@ -134,13 +145,13 @@ namespace login
             return LoginResult::DataError;
         }
 
-        if (!data.contains("managers") || !data["managers"].is_array())
+        if (!data.contains("users") || !data["users"].is_array())
         {
             cout << "로그인 데이터 형식 오류\n";
             return LoginResult::DataError;
         }
 
-        for (const auto &item : data["managers"])
+        for (const auto &item : data["users"])
         {
             if (!item.contains("id") || !item.contains("pw"))
                 continue;
@@ -152,6 +163,25 @@ namespace login
             {
                 if (storedPw == idpw.pw)
                 {
+                    outRole = item.value("role", "");
+                    if (outRole.empty())
+                    {
+                        cout << "권한 정보(역할) 누락\n";
+                        return LoginResult::DataError;
+                    }
+                    if (!data.contains("roles") || !data["roles"].contains(outRole) || !data["roles"][outRole].is_array())
+                    {
+                        cout << "권한 정보(roles) 형식 오류\n";
+                        return LoginResult::DataError;
+                    }
+
+                    outPerms.clear();
+                    for (const auto &p : data["roles"][outRole])
+                    {
+                        if (p.is_string())
+                            outPerms.push_back(p.get<string>());
+                    }
+
                     cout << "로그인 성공\n";
                     return LoginResult::Success;
                 }

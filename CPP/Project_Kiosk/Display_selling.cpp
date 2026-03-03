@@ -8,6 +8,7 @@
    - 메뉴 선택 시 수량 입력 → 최종 확인을 거쳐 장바구니(JSON)에 누적 저장한다.
    - 장바구니 화면에서는 번호를 선택해 수량을 줄이거나 삭제할 수 있다.
    - 장바구니는 카테고리/아이템 구조(JSON)로 만들어 Payment/Shopping 단계에 전달한다.
+   - 장바구니 합계는 cartutil::CalcCartTotal로 계산한다.
    - 화면 전환마다 콘솔을 정리해 가독성을 유지한다.
 */
 
@@ -16,8 +17,9 @@
 #include <vector>    // 메뉴/카테고리 보관 (std::vector)
 #include <algorithm> // 정렬/뒤집기 (std::reverse)
 
-#include "Display.h"      // MenuResult 구조/인터페이스 (display::RunMenu)
-#include "ConsoleUtil.h"  // 콘솔 화면 정리 (ClearScreen)
+#include "Display_selling.h" // MenuResult 구조/인터페이스 (display::RunMenu)
+#include "ConsoleUtil.h"  // 콘솔 유틸 (ClearScreen, ReadLineStrict, TryParseIntExact, PromptYesNo, PromptPositiveInt)
+#include "CartUtil.h"     // 장바구니 합계 계산 (cartutil::CalcCartTotal)
 
 using namespace std;
 
@@ -50,18 +52,10 @@ void PrintHeader(const vector<Category> &cats, size_t current, bool includeCart)
 void PrintMenu(const Category &cat);
 // 하단 안내문 출력
 void PrintFooter(bool inCart);
-// 숫자 입력 여부 확인
-bool IsNumber(const string &s);
 // 장바구니에 항목 추가/누적
 void AddToCart(data::json &cart, const string &category, const MenuItem &item, int qty);
-// Y/N 입력 처리
-bool PromptYesNo();
-// 1 이상의 수량 입력 처리
-int PromptPositiveInt();
 // 장바구니 화면 출력(번호 포함)
 vector<CartItemRef> PrintCartWithIndex(const data::json &cart);
-// 장바구니 총합 계산
-int CalcCartTotal(const data::json &cart);
 // 입력 문자열 소문자 변환
 string ToLowerCopy(string s);
 // 장바구니 항목 수량 감소/삭제
@@ -124,7 +118,8 @@ namespace display
 
             string input;
             cout << "입력 : ";
-            cin >> input;
+            if (!ReadLineStrict(input))
+                continue;
 
             string lowered = ToLowerCopy(input);
             if (lowered == "out")
@@ -152,10 +147,9 @@ namespace display
             // 장바구니 화면: 번호 입력 시 수량 감소/삭제
             if (currentIndex == cartIndex)
             {
-                if (!IsNumber(input))
+                int sel = 0;
+                if (!TryParseIntExact(input, sel))
                     continue;
-
-                int sel = stoi(input);
                 if (sel < 1 || sel > static_cast<int>(cartIndexMap.size()))
                     continue;
 
@@ -163,23 +157,19 @@ namespace display
                 continue;
             }
 
-            if (!IsNumber(input))
+            int idx = 0;
+            if (!TryParseIntExact(input, idx))
                 continue;
-
-            int idx = stoi(input);
             if (idx < 1 || idx > static_cast<int>(categories[currentIndex].items.size()))
                 continue;
 
             const MenuItem &selected = categories[currentIndex].items[idx - 1];
 
             ClearScreen();
-            cout << "\"" << selected.name << "\" 몇 개를 추가하시겠습니까?\n";
-            cout << "입력 : ";
-            int qty = PromptPositiveInt();
+            int qty = 0;
+            PromptPositiveInt("\"" + selected.name + "\" 몇 개를 추가하시겠습니까?", qty);
 
-            cout << "\"" << selected.name << "\" " << qty << "개를 장바구니에 추가할까요? (Y/N)\n";
-            cout << "입력 : ";
-            if (PromptYesNo())
+            if (PromptYesNo("\"" + selected.name + "\" " + to_string(qty) + "개를 장바구니에 추가할까요? (Y/N)"))
             {
                 AddToCart(cart, categories[currentIndex].name, selected, qty);
             }
@@ -189,11 +179,6 @@ namespace display
         return {false, cart};
     }
 } // namespace display
-
-// 함수 정의 (필요 시 주석 해제 후 작성)
-/*
-
-*/
 
 bool LoadMenuData(vector<Category> &out)
 {
@@ -295,18 +280,6 @@ void PrintFooter(bool inCart)
     }
 }
 
-bool IsNumber(const string &s)
-{
-    if (s.empty())
-        return false;
-    for (char c : s)
-    {
-        if (c < '0' || c > '9')
-            return false;
-    }
-    return true;
-}
-
 void AddToCart(data::json &cart, const string &category, const MenuItem &item, int qty)
 {
     if (!cart.contains("categories") || !cart["categories"].is_array())
@@ -344,40 +317,6 @@ void AddToCart(data::json &cart, const string &category, const MenuItem &item, i
     cart["categories"].push_back(newCat);
 }
 
-bool PromptYesNo()
-{
-    while (true)
-    {
-        string s;
-        cin >> s;
-        if (s == "Y" || s == "y")
-            return true;
-        if (s == "N" || s == "n")
-            return false;
-
-        cout << "Y 또는 N만 입력하세요.\n";
-        cout << "입력 : ";
-    }
-}
-
-int PromptPositiveInt()
-{
-    while (true)
-    {
-        string s;
-        cin >> s;
-        if (IsNumber(s))
-        {
-            int v = stoi(s);
-            if (v > 0)
-                return v;
-        }
-
-        cout << "1 이상의 숫자만 입력하세요.\n";
-        cout << "입력 : ";
-    }
-}
-
 vector<CartItemRef> PrintCartWithIndex(const data::json &cart)
 {
     vector<CartItemRef> indexMap;
@@ -410,26 +349,9 @@ vector<CartItemRef> PrintCartWithIndex(const data::json &cart)
         cout << "\n";
     }
 
-    int grandTotal = CalcCartTotal(cart);
+    int grandTotal = cartutil::CalcCartTotal(cart);
     cout << "총 가격 : \"" << FormatPrice(grandTotal) << "원\"\n";
     return indexMap;
-}
-
-int CalcCartTotal(const data::json &cart)
-{
-    int sum = 0;
-    if (!cart.contains("categories") || !cart["categories"].is_array())
-        return 0;
-    for (const auto &cat : cart["categories"])
-    {
-        if (!cat.contains("items") || !cat["items"].is_array())
-            continue;
-        for (const auto &it : cat["items"])
-        {
-            sum += it.value("total", 0);
-        }
-    }
-    return sum;
 }
 
 string ToLowerCopy(string s)
@@ -447,13 +369,11 @@ int PromptRemoveQty(int maxQty)
     while (true)
     {
         string s;
-        cin >> s;
-        if (IsNumber(s))
-        {
-            int v = stoi(s);
-            if (v >= 0 && v <= maxQty)
-                return v;
-        }
+        if (!ReadLineStrict(s))
+            continue;
+        int v = 0;
+        if (TryParseIntExact(s, v) && v >= 0 && v <= maxQty)
+            return v;
 
         cout << "0부터 " << maxQty << "까지의 숫자만 입력하세요.\n";
         cout << "입력 : ";
@@ -489,9 +409,7 @@ void ReduceCartItem(data::json &cart, const CartItemRef &ref, string &statusMess
         return;
     }
 
-    cout << removeQty << "개를 취소하시겠습니까? (Y/N)\n";
-    cout << "입력 : ";
-    if (!PromptYesNo())
+    if (!PromptYesNo(to_string(removeQty) + "개를 취소하시겠습니까? (Y/N)"))
     {
         statusMessage = "취소가 취소되었습니다. 장바구니로 돌아갑니다.";
         return;
@@ -521,3 +439,5 @@ void ReduceCartItem(data::json &cart, const CartItemRef &ref, string &statusMess
     ClearScreen();
     statusMessage = "취소가 완료되었습니다. 장바구니로 돌아갑니다.";
 }
+
+

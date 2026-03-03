@@ -1,0 +1,59 @@
+{
+  "_comment": "권한/계정 정보 파일 (users/roles 구조를 유지하세요)",
+  "_permission_notes": {
+    "menu_manage": "메뉴 관리(카테고리/메뉴 추가·삭제·가격 변경)",
+    "sales_view": "매출 조회(일/월/총 매출 보기)",
+    "sales_manage": "매출 관리(정산/초기화/분석 등 확장 기능)",
+    "user_manage": "하위 관리자 계정 관리(추가/삭제/권한 변경)",
+    "sales_start": "판매 시스템 시작(키오스크 판매 화면 진입)",
+    "system_manage": "시스템 종료/점검(관리자 메뉴 6번 포함)"
+  },
+  "users": [
+    {
+      "id": "김영준",
+      "pw": "980131",
+      "role": "master"
+    },
+    {
+      "id": "manager",
+      "pw": "12345",
+      "role": "manager"
+    },
+    {
+      "id": "노예",
+      "pw": "8282",
+      "role": "staff"
+    },
+    {
+      "id": "guest",
+      "pw": "0000",
+      "role": "guest"
+    }
+  ],
+  "roles": {
+    "master": [
+      "menu_manage",
+      "sales_view",
+      "sales_manage",
+      "user_manage",
+      "sales_start",
+      "system_manage"
+    ],
+    "manager": [
+      "menu_manage",
+      "sales_view",
+      "sales_manage",
+      "user_manage",
+      "sales_start",
+      "system_manage"
+    ],
+    "staff": [
+      "sales_start",
+      "system_manage"
+    ],
+    "guest": [
+      "sales_view",
+      "system_manage"
+    ]
+  }
+}

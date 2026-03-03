@@ -15,7 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(ProjectManager
   ProjectManager.cpp
   Login.cpp
-  Display.cpp
+  Display_selling.cpp
+  Display_Manager.cpp
   Payment.cpp
   Shpping.cpp
   ConsoleUtil.cpp

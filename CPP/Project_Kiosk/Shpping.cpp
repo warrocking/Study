@@ -162,8 +162,3 @@ namespace shopping
         return true;
     }
 } // namespace shopping
-
-// 함수 정의 (필요 시 주석 해제 후 작성)
-/*
-
-*/

@@ -8,19 +8,21 @@
    - 현금 결제는 10% 할인 후, 누적 입금 방식으로 잔액을 계산하고 거스름돈을 출력한다.
    - 결제 완료 시 영수증 JSON을 생성하고 10초 동안 영수증 화면을 보여준다.
    - 결제 취소 시 이전 단계로 돌아갈 수 있도록 실패 결과를 반환한다.
+   - 장바구니 합계는 cartutil::CalcCartTotal로 계산한다.
 */
 
 #include <iostream> // 콘솔 입출력 (std::cout, std::cin)
 #include <string>   // 문자열 처리 (std::string)
-#include <limits>   // 입력 버퍼 정리 (std::numeric_limits<streamsize>::max)
 #include <sstream>  // 문자열 구성 (std::ostringstream)
 #include <iomanip>  // 출력 포맷 (std::setw, std::setfill)
 #include <thread>   // 대기 처리 (std::this_thread::sleep_for)
 #include <chrono>   // 시간 단위 (std::chrono::seconds)
+#include <ctime>    // 시간 처리 (std::time, localtime_s/localtime_r)
 #include <cstdlib>  // 시스템 명령 (system)
 
 #include "Payment.h"     // 결제 결과/인터페이스 (ReceiptResult, ProcessPayment)
-#include "ConsoleUtil.h" // 콘솔 화면 정리 (ClearScreen)
+#include "ConsoleUtil.h" // 콘솔 유틸 (ClearScreen, ReadMaskedInput, ReadLineStrict, TryParseIntExact, PromptYesNo)
+#include "CartUtil.h"    // 장바구니 합계 계산 (cartutil::CalcCartTotal)
 
 using namespace std;
 
@@ -58,23 +60,6 @@ namespace
         }
     }
 
-    int CalcCartTotal(const data::json &cart)
-    {
-        int sum = 0;
-        if (!cart.contains("categories") || !cart["categories"].is_array())
-            return 0;
-        for (const auto &cat : cart["categories"])
-        {
-            if (!cat.contains("items") || !cat["items"].is_array())
-                continue;
-            for (const auto &it : cat["items"])
-            {
-                sum += it.value("total", 0);
-            }
-        }
-        return sum;
-    }
-
     string GetCardBrand(const string &card4)
     {
         if (card4.size() < 2)
@@ -104,22 +89,22 @@ namespace
     string BuildDateTime()
     {
         std::time_t now = std::time(nullptr);
-        std::tm local_tm{};
+        std::tm localTm{};
 #if defined(_WIN32)
-        localtime_s(&local_tm, &now);
+        localtime_s(&localTm, &now);
 #else
-        localtime_r(&now, &local_tm);
+        localtime_r(&now, &localTm);
 #endif
         std::ostringstream oss;
-        oss << (local_tm.tm_year + 1900) << "-"
-            << std::setw(2) << std::setfill('0') << (local_tm.tm_mon + 1) << "-"
-            << std::setw(2) << std::setfill('0') << local_tm.tm_mday << " "
-            << std::setw(2) << std::setfill('0') << local_tm.tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << local_tm.tm_min;
+        oss << (localTm.tm_year + 1900) << "-"
+            << std::setw(2) << std::setfill('0') << (localTm.tm_mon + 1) << "-"
+            << std::setw(2) << std::setfill('0') << localTm.tm_mday << " "
+            << std::setw(2) << std::setfill('0') << localTm.tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << localTm.tm_min;
         return oss.str();
     }
 
-    data::json BuildItemsArray(const data::json &cart)
+    data::json BuildItemsArray(const data::json &cart) // 영수증에 들어갈 items 배열 구성 (category, name, qty)
     {
         data::json items = data::json::array();
         if (!cart.contains("categories") || !cart["categories"].is_array())
@@ -142,7 +127,7 @@ namespace
         return items;
     }
 
-    void PrintReceiptAndWait(const data::json &receipt)
+    void PrintReceiptAndWait(const data::json &receipt) // 영수증 출력 후 10초 대기
     {
         cout << "------------------------------------------\n";
         if (receipt.contains("count"))
@@ -190,7 +175,7 @@ namespace payment
         cout << "결제 화면\n";
         cout << "------------------------------------------\n\n";
         PrintCart(cart);
-        int total = CalcCartTotal(cart);
+        int total = cartutil::CalcCartTotal(cart);
         cout << "총 금액 : " << total << "원\n";
         cout << "------------------------------------------\n\n";
 
@@ -202,11 +187,12 @@ namespace payment
             cout << "------------------------------------------\n";
             cout << "입력 : ";
 
-            cin >> method;
-            if (!cin)
+            string line;
+            if (!ReadLineStrict(line))
+                continue;
+            if (!TryParseIntExact(line, method))
             {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "잘못된 결제 방식입니다. 다시 입력해주세요.\n";
                 continue;
             }
             if (method == 1 || method == 2)
@@ -226,7 +212,7 @@ namespace payment
             {
                 cout << "\n카드번호 4자리를 입력해주세요.\n";
                 cout << "입력 : ";
-                cin >> card4;
+                card4 = ReadMaskedInput(4, true); // 입력 4자리 전부 * 로 표시
 
                 if (!Is4Digit(card4))
                 {
@@ -242,13 +228,9 @@ namespace payment
                 break;
             }
 
-            cout << "\n"
-                 << brand << "(" << card4 << ")\n";
-            cout << "결제하시겠습니까? (Y/N)\n";
-            cout << "입력 : ";
-            string yn;
-            cin >> yn;
-            if (!(yn == "Y" || yn == "y"))
+            string masked = card4.substr(0, 2) + "**";
+            cout << "\n" << brand << "(" << masked << ")\n";
+            if (!PromptYesNo("결제하시겠습니까? (Y/N)"))
             {
                 cout << "결제가 취소되었습니다. 이전 메뉴로 돌아갑니다.\n";
                 return {false, data::json::object(), 0};
@@ -276,13 +258,11 @@ namespace payment
                 cout << "입력 : ";
 
                 int pay = 0;
-                cin >> pay;
-                if (!cin)
-                {
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                string line;
+                if (!ReadLineStrict(line))
                     continue;
-                }
+                if (!TryParseIntExact(line, pay))
+                    continue;
                 if (pay == 0)
                 {
                     cout << "결제가 취소되었습니다. 이전 메뉴로 돌아갑니다.\n";
@@ -317,8 +297,3 @@ namespace payment
         return {true, receipt, finalAmount};
     }
 } // namespace payment
-
-// 함수 정의 (필요 시 주석 해제 후 작성)
-/*
-
-*/
