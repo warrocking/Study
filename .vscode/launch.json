@@ -5,7 +5,7 @@
             "name": "ProjectManager (CMake)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "C:\\Study\\CPP\\Project_Kiosk\\build\\Debug\\ProjectManager.exe",
+            "program": "C:\\Study\\build\\Debug\\ProjectManager.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "C:\\Study\\CPP\\Project_Kiosk",

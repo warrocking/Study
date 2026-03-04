@@ -1,5 +1,5 @@
 {
-  "count": 4,
+  "count": 8,
   "receipts": [
     {
       "amount": 38000,
@@ -88,6 +88,82 @@
         {
           "category": "반찬",
           "name": "김치",
+          "qty": 1
+        }
+      ],
+      "method": "현금"
+    },
+    {
+      "amount": 17000,
+      "count": 5,
+      "datetime": "2026-03-03 22:01",
+      "items": [
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 1
+        },
+        {
+          "category": "술",
+          "name": "사케",
+          "qty": 1
+        }
+      ],
+      "method": "현대카드(1022)"
+    },
+    {
+      "amount": 0,
+      "count": 6,
+      "datetime": "2026-03-03 22:02",
+      "items": [],
+      "method": "현금"
+    },
+    {
+      "amount": 25000,
+      "count": 7,
+      "datetime": "2026-03-03 22:06",
+      "items": [
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 1
+        },
+        {
+          "category": "반찬",
+          "name": "김치",
+          "qty": 1
+        },
+        {
+          "category": "반찬",
+          "name": "돼지고기 수육",
+          "qty": 1
+        },
+        {
+          "category": "밥",
+          "name": "백반",
+          "qty": 1
+        }
+      ],
+      "method": "현대카드(1011)"
+    },
+    {
+      "amount": 18000,
+      "count": 8,
+      "datetime": "2026-03-04 10:39",
+      "items": [
+        {
+          "category": "국",
+          "name": "된장국",
+          "qty": 1
+        },
+        {
+          "category": "반찬",
+          "name": "돈까스",
+          "qty": 1
+        },
+        {
+          "category": "밥",
+          "name": "백반",
           "qty": 1
         }
       ],
