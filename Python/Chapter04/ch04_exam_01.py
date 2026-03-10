@@ -21,13 +21,13 @@ import sys
 
 def main() -> None:
     # 변수 선언 및 초기화
+    print("p.227 1번 문제")
     """
         dict_a의 값         dic_a에 적용할 코드         dict_a의 결과
         ------------------------------------------------------------
             {}                                        {'name' : '구름'}
         {"name" : "구름"}                                   {}
     """
-    print("p.227 1번 문제")
     dict_a = {}
     dict_a["name"]= "구름"
     print(dict_a)

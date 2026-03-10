@@ -80,7 +80,8 @@ def main() -> None:
     sum=0
     for i in range(0,int(len(score))):
         sum += score[i]
-        
+    #for score in scores:
+    #    sum += score
     if(len(score)!=0):
         avg = sum / len(score)
     else:
