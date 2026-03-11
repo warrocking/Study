@@ -7,12 +7,22 @@
       "command": "cmd",
       "args": [
         "/c",
-        "\"\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\VsDevCmd.bat\" && cl /nologo \"${file}\" ws2_32.lib\""
+        "call",
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "&&",
+        "cl",
+        "/nologo",
+        "${file}",
+        "ws2_32.lib"
       ],
       "options": {
         "cwd": "${fileDirname}"
       },
-      "problemMatcher": "$msCompile"
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "Build hello_server_win (MSVC)",
@@ -20,7 +30,13 @@
       "command": "cmd",
       "args": [
         "/c",
-        "\"\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\VsDevCmd.bat\" && cl /nologo hello_server_win.c ws2_32.lib\""
+        "call",
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "&&",
+        "cl",
+        "/nologo",
+        "hello_server_win.c",
+        "ws2_32.lib"
       ],
       "options": {
         "cwd": "${workspaceFolder}\\Chapter01"
@@ -33,7 +49,13 @@
       "command": "cmd",
       "args": [
         "/c",
-        "\"\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\VsDevCmd.bat\" && cl /nologo hello_client_win.c ws2_32.lib\""
+        "call",
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+        "&&",
+        "cl",
+        "/nologo",
+        "hello_client_win.c",
+        "ws2_32.lib"
       ],
       "options": {
         "cwd": "${workspaceFolder}\\Chapter01"
@@ -45,11 +67,7 @@
       "dependsOn": [
         "Build hello_server_win (MSVC)",
         "Build hello_client_win (MSVC)"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      ]
     },
     {
       "label": "Run hello_server_win (port input)",
