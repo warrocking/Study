@@ -1,0 +1,85 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run active file (MSVC, no args)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [],
+      "cwd": "${fileDirname}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Build active file (MSVC)"
+    },
+    {
+      "name": "Server (active file, 1 arg)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [
+        "${input:arg_port}"
+      ],
+      "cwd": "${fileDirname}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Build active file (MSVC)"
+    },
+    {
+      "name": "Client (active file, 2 args)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [
+        "${input:arg_host}",
+        "${input:arg_port}"
+      ],
+      "cwd": "${fileDirname}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Build active file (MSVC)"
+    },
+    {
+      "name": "Debug hello_server_win (MSVC)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\Chapter01\\hello_server_win.exe",
+      "args": [
+        "${input:port}"
+      ],
+      "cwd": "${workspaceFolder}\\Chapter01",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Build hello_server_win (MSVC)"
+    },
+    {
+      "name": "Debug hello_client_win (MSVC)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\Chapter01\\hello_client_win.exe",
+      "args": [
+        "127.0.0.1",
+        "${input:port}"
+      ],
+      "cwd": "${workspaceFolder}\\Chapter01",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Build hello_client_win (MSVC)"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "arg_host",
+      "type": "promptString",
+      "description": "Host (e.g. 127.0.0.1)",
+      "default": "127.0.0.1"
+    },
+    {
+      "id": "arg_port",
+      "type": "promptString",
+      "description": "Port number (avoid reserved ranges; e.g. 20000)",
+      "default": "20000"
+    },
+    {
+      "id": "port",
+      "type": "promptString",
+      "description": "Port number (avoid reserved ranges; e.g. 20000)",
+      "default": "20000"
+    }
+  ]
+}

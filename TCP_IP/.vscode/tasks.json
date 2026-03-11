@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build active file (MSVC)",
+      "type": "process",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "\"\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\VsDevCmd.bat\" && cl /nologo \"${file}\" ws2_32.lib\""
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build hello_server_win (MSVC)",
+      "type": "process",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "\"\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\VsDevCmd.bat\" && cl /nologo hello_server_win.c ws2_32.lib\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}\\Chapter01"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build hello_client_win (MSVC)",
+      "type": "process",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "\"\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\Tools\\VsDevCmd.bat\" && cl /nologo hello_client_win.c ws2_32.lib\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}\\Chapter01"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build Chapter01 (MSVC)",
+      "dependsOn": [
+        "Build hello_server_win (MSVC)",
+        "Build hello_client_win (MSVC)"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run hello_server_win (port input)",
+      "type": "process",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "\"\"${workspaceFolder}\\Chapter01\\hello_server_win.exe\" ${input:port}\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}\\Chapter01"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run hello_client_win (127.0.0.1)",
+      "type": "process",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "\"\"${workspaceFolder}\\Chapter01\\hello_client_win.exe\" 127.0.0.1 ${input:port}\""
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}\\Chapter01"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "port",
+      "type": "promptString",
+      "description": "Port number (avoid reserved ranges; e.g. 20000)",
+      "default": "20000"
+    }
+  ]
+}

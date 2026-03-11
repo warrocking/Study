@@ -1,7 +1,9 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // winsock c4996 처리
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <winsock2.h>
-
+#pragma comment(lib, "ws2_32.lib") // ws2_32.lib 라이브러리를 링크
 void error_handling(char *message);
 
 int main(int argc, char *argv[])
@@ -11,7 +13,7 @@ int main(int argc, char *argv[])
     SOCKADDR_IN servAddr, clntAddr;
 
     int szClntAddr;
-    char message[] = "Hello World!";
+    char message[] = "제발 연결되라 제발";
 
     if (argc != 2)
     {
