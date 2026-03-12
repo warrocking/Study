@@ -8,7 +8,6 @@
 
 # 기본 모듈
 import sys
-import time
 
 # 반복문으로 팩토리얼 구하기
 def factorial(n):
@@ -34,10 +33,9 @@ def fibonacci_recursion_01(n):
 
 # 재귀 함수로 구현한 피보나치 수열 2
 counter =0
-def fibonacci_recursion_02(n, verbose=True):
+def fibonacci_recursion_02(n):
     # 어떤 피보나치 수를 구하는지 출력합니다.
-    if verbose:
-        print("fibonacci({})를 구합니다".format(n))
+    print("fibonacci({})를 구합니다".format(n))
     global counter  # 안쓰면 UnboundLocalError 생성됨.
     counter += 1
     if n==1 or n==2:
@@ -59,32 +57,6 @@ def fibonacci_memo(n):
         output = fibonacci_memo(n-1) + fibonacci_memo(n-2)
         dictionary_fibonacci[n] = output
         return output
-
-
-def benchmark_fibonacci(n):
-    # 재귀(1)
-    start = time.perf_counter()
-    fibonacci_recursion_01(n)
-    t1 = time.perf_counter() - start
-
-    # 재귀(2) - 출력 없이 측정
-    global counter
-    counter = 0
-    start = time.perf_counter()
-    fibonacci_recursion_02(n, verbose=False)
-    t2 = time.perf_counter() - start
-
-    # 메모화 - 메모 초기화 후 측정
-    global dictionary_fibonacci
-    dictionary_fibonacci = {1: 1, 2: 1}
-    start = time.perf_counter()
-    fibonacci_memo(n)
-    t3 = time.perf_counter() - start
-
-    print("[속도 측정 결과]")
-    print(f"재귀 1 (fibonacci_recursion_01) : {t1:.6f}초")
-    print(f"재귀 2 (fibonacci_recursion_02) : {t2:.6f}초")
-    print(f"메모화 (fibonacci_memo)       : {t3:.6f}초")
     
 
 
@@ -120,9 +92,7 @@ def main() -> None:
     print("fibonacci_memo(20) = ", fibonacci_memo(20))
     print("fibonacci_memo(30) = ", fibonacci_memo(30))
 
-    print()
-    print("피보나치 속도 측정 (n=30)")
-    benchmark_fibonacci(30)
+    # 조기 리턴
     
     
     
