@@ -48,7 +48,7 @@ class _Json:
         # file_folder, path 는 check랑 같음
         if _Json._check(file_name, file_folder, file_path):#파일이 있을때
             list_data = []
-            with open(target_path, "r", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 list_data = json.load(f)
             return list_data
             

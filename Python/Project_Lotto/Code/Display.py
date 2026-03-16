@@ -24,7 +24,7 @@ import sys
 import random
 from Random import Random
 #from tkinter import *
-from Data import load_Json, make_Json, save_Json, check_Json
+from Project_Lotto.Code.Data_AI import load_Json, make_Json, save_Json, check_Json
 
 def control_panel(num):
     if(num==1):

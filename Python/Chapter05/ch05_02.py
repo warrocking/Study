@@ -58,7 +58,7 @@ def fibonacci_memo(n):
         dictionary_fibonacci[n] = output
         return output
 
-# 조기 리턴으로 피보나치 만글기
+# 조기 리턴으로 피보나치 만들기
 def fibonacci_early_return(n):
     if n in dictionary_fibonacci:
         return dictionary_fibonacci[n]
@@ -70,8 +70,8 @@ def fibonacci_early_return(n):
 def list_flatten_1(data):
     output = []
     for item in data:
-        if type(item) == list:
-            output += list_flatten_1(item)
+        if type(item) is list:
+            output += item
         else:
             output.append(item)
     return output
@@ -81,7 +81,7 @@ def list_flatten_2(data):
     output = []
     for item in data:
         if type(item) == list:
-            output += list_flatten_2(item)
+            output += list_flatten_2(item)# 재귀함수 식으로 제작함.
         else:
             output.append(item)
     return output
@@ -183,7 +183,7 @@ def main() -> None:
     print("fibonacci(10) 계산할때 함수를 호출한 횟수는 {}입니다.".format(counter))
     print()
     
-    # 메모화로 구현한 피보나치 수열 3
+    # 메모화로 구현한 피보나치 수열 
     print("fibonacci_memo(10) = ", fibonacci_memo(10))
     print("fibonacci_memo(20) = ", fibonacci_memo(20))
     print("fibonacci_memo(30) = ", fibonacci_memo(30))
@@ -205,11 +205,11 @@ def main() -> None:
     print()
 
     # p.315 연습문제 
-    print("p.315 연습문제")
-    print("6명 패턴:")
-    print("6명 경우의 수 :", algorizum(6, MIN_PEOPLE_PER_TABLE, True))
-    print("10명 경우의 수 :", algorizum(10, MIN_PEOPLE_PER_TABLE, False))
-    print("100명 경우의 수 :", algorizum(100, MIN_PEOPLE_PER_TABLE, 1))
+    # print("p.315 연습문제")
+    # print("6명 패턴:")
+    # print("6명 경우의 수 :", algorizum(6, MIN_PEOPLE_PER_TABLE, True))
+    # print("10명 경우의 수 :", algorizum(10, MIN_PEOPLE_PER_TABLE, False))
+    # print("100명 경우의 수 :", algorizum(100, MIN_PEOPLE_PER_TABLE, 1))
     
     """
         - 3가지 키워드로 정리하는 핵심 포인트
