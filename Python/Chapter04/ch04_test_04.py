@@ -28,7 +28,7 @@ def main() -> None:
     
     # 함수 처리
     for i in range(1, 101):
-        binary = bin(i)[2:]        # "0b" 제거 → "1011"
+        binary = bin(i)[2:]        # "0b" 제거 → "1011" # 기존 출력 : 11 -> 0b1011 을 1011로 변환
         combine_list.append(binary)
         print("{} : {}".format(i, combine_list[i-1]))
         

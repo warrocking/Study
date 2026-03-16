@@ -47,7 +47,7 @@ def default_param(value, n=2):
     for i in range(n):
         print(value)
 
-# 키워드 매개변수 
+# 키워드 매개변수 # 가변매개변수가 기본 매개변수보다 앞에 올때 가변 매개 변수가 우선된다.
 def param_keyword_01(*value, n=2):
     for i in range(n):
         for values in value:
@@ -103,6 +103,7 @@ def main() -> None:
     # 기본적인 함수
     print_3_times()
     division()
+    
     # 매개변수의 기본    
     print_n_times("안녕하세요", 5)
     division()
