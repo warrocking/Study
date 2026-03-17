@@ -20,52 +20,49 @@ def make_pixel(size, type, color=255):# 그림 만들기
             print("w", end=" ")
         print("")
     
-    
     pass
 def draw_pixel(): # 만든 그림을 출력하기
     
     pass
 
 class _picture_Swing:
-    def Turn_Left():#그림 좌로 90도 돌리기
+    def Turn_Left():#그림 좌로 90도 돌리기ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
         
         pass
     def Turn_Right():#그림 우로 90도 돌리기
         
         pass
-    def Turn_UpDown():#그림 상하 반전
-        
-        pass
-    def Turn_LeftRight():#그림 좌우 반전
-        
-        pass
+    def Turn_UpDown()
+    
+    
+#trajgpe=======================================================================================================================================================================================================================================================================================================
+tarngle = {}
+target_image = tarngle()
+for i in range(50):
+    list1 = [0]
+    list1 = []
+    for y in range(50):
+        list1.append(0)
+    target_image.append(list1)
+print(target_image)
 
-def main() -> None:
-    
-    canvas_size = int(input("캔버스 사이즈를 입력해주세요 : "))
-    
-    print("{}를 입력하여 {}*{}의 밑바탕이 생성되었습니다.".format(canvas_size, canvas_size, canvas_size))
-    
-    
-    pixel = int(input("원하는 그림을 고르시오.\
-        1. 삼각형\
-        2. 사각형\
-        3. 마름모\
-        4. 원\n: "))
-    
-    if pixel == 1:
-        make_pixel(canvas_size, pixel)
-        pass
-    elif pixel == 2:
-        pass
-    elif pixel == 3:
-        pass
-    elif pixel == 4:
-        pass
-    else:
-        pass
-    
-    pass
+(_i, _j)=(49,0)
+for i in range(50):
+    for j in range(50):
+        target_image[_i][j] = triangle[i][j]
+    _i=1
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
