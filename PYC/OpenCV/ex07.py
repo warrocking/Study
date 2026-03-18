@@ -159,7 +159,7 @@ def main() -> None:
 
             # 움직인 픽셀이 ROI의 10%를 넘으면 "터치 성공"
             # 0.1(10%) 값은 민감도: 낮추면 더 쉽게 맞고, 높이면 더 어렵게 맞음
-            if movement_pixel > area * 0.1:
+            if movement_pixel > area * 0.2:
                 score += 1
                 print("터치 성공 - 점수 : {}".format(score))
 
