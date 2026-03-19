@@ -1,10 +1,10 @@
-﻿{
+{
   "jupyter.askForKernelRestart": false,
   "jupyter.interactiveWindow.creationMode": "perFile",
-  "jupyter.sendSelectionToInteractiveWindow": true,
   "notebook.lineNumbers": "on",
   "notebook.output.scrolling": true,
   "files.exclude": {
     "**/__pycache__": true
-  }
+  },
+  "jupyter.interactiveWindow.textEditor.executeSelection": true
 }
