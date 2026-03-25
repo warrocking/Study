@@ -46,11 +46,19 @@ OpenCV 손동작 메뉴 + 과일 터치 게임
 import os
 import random
 import time
+import json
+from datetime import datetime
 
 # OpenCV: 카메라/영상 처리/텍스트·도형 출력
 # NumPy: 이미지(배열) 생성·합성 시 데이터 타입/채널 연산
 import cv2
 import numpy as np
+# QR 생성 패키지(qrcode)가 없을 수도 있으므로 안전하게 예외 처리
+try:
+    import qrcode
+except Exception:
+    qrcode = None
+
 
 
 # 과일 타겟 1개에 대한 "상태 + 동작"을 묶은 클래스
@@ -156,7 +164,9 @@ class ImageTool:
             # 가로/세로는 그대로 두고 채널만 늘리겠다는 뜻
             # (높이, 너비, 3) + (높이, 너비, 1) = (높이, 너비, 4) --> BGR + A = BGRA
             raw_image = np.concatenate([raw_image, alpha_layer], axis=2)
-            return raw_image
+
+        # 4채널(BGRA) 원본이거나 위에서 3채널->4채널 변환이 끝난 이미지를 반환
+        return raw_image
 
     @staticmethod
     # 리소스 이미지를 안전하게 읽고, 채널 형식과 크기를 통일해서 반환하는 함수
@@ -223,7 +233,7 @@ class ImageTool:
     def load_fruitAssets():
         # 현재 파일(OpenCV/portfolio.py) 기준 상위 폴더(PYC) 계산
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        resource_dir = os.path.join(base_dir, "Resource")
+        resource_dir = os.path.join(base_dir, "Resource", "Img")
 
         file_name_list = ["banana.png", "strawberry.png", "watermelon.png"]
         fruit_assets = []
@@ -233,7 +243,7 @@ class ImageTool:
             file_path = os.path.join(resource_dir, file_name)
             image_asset = ImageTool.load_resizedImage(file_path, (80, 80))
             if image_asset is None:
-                print(f"[WARN] 이미지 로드 실패: {file_path}")
+                print(f"[WARN] Image load failed: {file_path}")
                 continue
             fruit_assets.append((os.path.splitext(file_name)[0], image_asset))
 
@@ -244,10 +254,10 @@ class ImageTool:
         return fruit_assets
 
     @staticmethod
-    def load_squareAsset(sprite_size=(240, 130)):
-        # 버튼 베이스 이미지(square.png) 로드
+    def load_squareAsset(sprite_size=(240, 130), file_name="square.png"):
+        # 버튼 베이스 이미지 로드(기본: square.png, 세팅용: square_blue.png 등)
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        file_path = os.path.join(base_dir, "Resource", "square.png")
+        file_path = os.path.join(base_dir, "Resource", "Img", file_name)
         square_asset = ImageTool.load_resizedImage(file_path, sprite_size)
         if square_asset is None:
             # 누락 시에도 메뉴 UI 동작 보장을 위해 fallback 반환
@@ -365,6 +375,64 @@ class MotionTool:
         return mask_img
 
     @staticmethod
+    def build_frameMotion(frame_img, prev_filtered):
+        # 현재 프레임을 그레이 변환 후 필터 적용
+        gray_frame = cv2.cvtColor(frame_img, cv2.COLOR_BGR2GRAY)
+        curr_filtered = MotionTool.filter_grayFrame(gray_frame)
+
+        # 첫 프레임은 비교 기준이 없으므로 현재 프레임을 기준으로 설정
+        if prev_filtered is None:
+            prev_filtered = curr_filtered.copy()
+
+        # 이전 프레임 대비 움직임 마스크 생성
+        motion_mask = MotionTool.build_diffMask(curr_filtered, prev_filtered)
+
+        # 다음 루프에서 사용할 이전 프레임 갱신
+        prev_filtered = curr_filtered.copy()
+        return motion_mask, prev_filtered
+
+    @staticmethod
+    def apply_grayDisplay(frame_img):
+        # 화면 표시용 흑백 필터: Gray(1채널)로 바꾼 뒤 BGR(3채널)로 되돌려 그리기 호환 유지
+        gray_frame = cv2.cvtColor(frame_img, cv2.COLOR_BGR2GRAY)
+        return cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR)
+
+    @staticmethod
+    def apply_gaussianDisplay(frame_img, kernel_size=(15, 15), sigma_x=0):
+        # 화면 표시용 가우시안 블러 필터: 커널 크기가 클수록 더 부드럽고 흐려진다.
+        return cv2.GaussianBlur(frame_img, kernel_size, sigma_x)
+
+    @staticmethod
+    def apply_cannyDisplay(frame_img, low_threshold=20, high_threshold=60):
+        # 화면 표시용 캐니 엣지 필터: 경계선만 강조해 윤곽을 확인하기 쉽게 만든다.
+        # OpenCV 권장 비율(상한:하한 2~3배)에 맞춰 기본값을 1:3(20/60)로 설정
+        gray_frame = cv2.cvtColor(frame_img, cv2.COLOR_BGR2GRAY)
+        # 캐니 전에 약한 가우시안 블러를 넣어 점잡음(잔엣지) 완화
+        blur_frame = cv2.GaussianBlur(gray_frame, (3, 3), 0)
+        edge_frame = cv2.Canny(blur_frame, low_threshold, high_threshold, apertureSize=3, L2gradient=True)
+        return cv2.cvtColor(edge_frame, cv2.COLOR_GRAY2BGR)
+
+    @staticmethod
+    def apply_sharpenDisplay(frame_img):
+        # 화면 표시용 샤픈 필터: 경계와 디테일을 선명하게 강조한다.
+        sharpen_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], dtype=np.float32)
+        return cv2.filter2D(frame_img, -1, sharpen_kernel)
+
+    @staticmethod
+    def apply_displayFilter(frame_img, filter_key):
+        # 메뉴/세팅에서 고른 필터를 화면 출력에 반영한다.
+        if filter_key == "gray":
+            return MotionTool.apply_grayDisplay(frame_img)
+        if filter_key == "gaussian":
+            return MotionTool.apply_gaussianDisplay(frame_img)
+        if filter_key == "canny":
+            return MotionTool.apply_cannyDisplay(frame_img)
+        if filter_key == "sharpen":
+            return MotionTool.apply_sharpenDisplay(frame_img)
+        # 기본값: 필터 미적용 원본
+        return frame_img.copy()
+
+    @staticmethod
     def calc_rectMotion(mask_img, x1, y1, x2, y2):
         # 관심영역(ROI)만 잘라 계산하면 속도/안정성이 좋아짐
         roi_img = mask_img[y1:y2, x1:x2]
@@ -392,6 +460,229 @@ class MenuTool:
         for key_name in over_prev_map:
             over_prev_map[key_name] = False
 
+class AuthTool:
+
+    @staticmethod
+    def load_userData(file_name="users.json"):
+        # Resource/Data/users.json에서 로그인 계정 목록을 읽는다.
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        file_path = os.path.join(base_dir, "Resource", "Data", file_name)
+        if not os.path.exists(file_path):
+            print(f"[WARN] Login data file not found: {file_path}")
+            return []
+
+        try:
+            with open(file_path, "r", encoding="utf-8-sig") as fp:
+                raw_data = json.load(fp)
+        except Exception as err:
+            print(f"[WARN] Failed to read login data: {err}")
+            return []
+
+        user_list = []
+        if isinstance(raw_data, dict):
+            user_list = raw_data.get("users", [])
+        elif isinstance(raw_data, list):
+            user_list = raw_data
+
+        normalized = []
+        for user_obj in user_list:
+            if not isinstance(user_obj, dict):
+                continue
+            id_text = str(user_obj.get("id", "")).strip()
+            pw_text = str(user_obj.get("password", "")).strip()
+            nick_text = str(user_obj.get("nickname", "")).strip() or id_text
+            if id_text and pw_text:
+                normalized.append({"id": id_text, "password": pw_text, "nickname": nick_text})
+        return normalized
+
+    @staticmethod
+    def parse_loginQr(qr_text):
+        # Allowed formats (nickname is optional):
+        # 1) LOGIN|id|password|nickname
+        # 2) LOGIN|id|password
+        # 3) id|password|nickname
+        # 4) id|password
+        # 5) {"id":"...", "password":"...", "nickname":"..."}
+        if not qr_text:
+            return None
+
+        text_now = qr_text.strip()
+
+        # Try JSON first
+        if text_now.startswith("{") and text_now.endswith("}"):
+            try:
+                json_obj = json.loads(text_now)
+                id_text = str(json_obj.get("id", "")).strip()
+                pw_text = str(json_obj.get("password", "")).strip()
+                nick_text = str(json_obj.get("nickname", "")).strip()
+                if not id_text or not pw_text:
+                    return None
+                return {"id": id_text, "password": pw_text, "nickname": nick_text}
+            except Exception:
+                return None
+
+        # Parse pipe format
+        parts = [part.strip() for part in text_now.split("|")]
+        if parts and parts[0].upper() == "LOGIN":
+            parts = parts[1:]
+
+        if len(parts) < 2:
+            return None
+
+        id_text = parts[0]
+        pw_text = parts[1]
+        nick_text = parts[2] if len(parts) >= 3 else ""
+
+        if not id_text or not pw_text:
+            return None
+
+        return {"id": id_text, "password": pw_text, "nickname": nick_text}
+
+    @staticmethod
+    def detect_loginQr(detector, frame_img):
+        # 조명 반사/과노출 상황에서도 인식률을 높이기 위해 여러 전처리 버전으로 순차 시도
+        gray_img = cv2.cvtColor(frame_img, cv2.COLOR_BGR2GRAY)
+
+        clahe_obj = cv2.createCLAHE(clipLimit=2.2, tileGridSize=(8, 8))
+        clahe_img = clahe_obj.apply(gray_img)
+
+        blur_img = cv2.GaussianBlur(clahe_img, (0, 0), 1.0)
+        sharpen_img = cv2.addWeighted(clahe_img, 1.55, blur_img, -0.55, 0)
+
+        _, otsu_img = cv2.threshold(sharpen_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        adapt_img = cv2.adaptiveThreshold(
+            sharpen_img,
+            255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY,
+            31,
+            3,
+        )
+
+        candidate_list = [
+            ("raw", frame_img),
+            ("gray", gray_img),
+            ("clahe", clahe_img),
+            ("sharp", sharpen_img),
+            ("otsu", otsu_img),
+            ("adapt", adapt_img),
+        ]
+
+        for mode_name, candidate_img in candidate_list:
+            qr_text, qr_points, _ = detector.detectAndDecode(candidate_img)
+            if qr_text:
+                return qr_text, qr_points, mode_name
+
+        return "", None, "none"
+    @staticmethod
+    def verify_login(login_info, user_list):
+        if not login_info:
+            return None
+        id_text = str(login_info.get("id", "")).strip()
+        pw_text = str(login_info.get("password", "")).strip()
+
+        if not id_text or not pw_text:
+            return None
+
+        for user_obj in user_list:
+            if user_obj.get("id") == id_text and user_obj.get("password") == pw_text:
+                return user_obj
+        return None
+
+class QrTool:
+
+    @staticmethod
+    def make_qrImage(text_data, image_size=360):
+        if not text_data or qrcode is None:
+            return None
+
+        qr_obj = qrcode.QRCode(
+            version=None,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=8,
+            border=2,
+        )
+        qr_obj.add_data(text_data)
+        qr_obj.make(fit=True)
+
+        pil_img = qr_obj.make_image(fill_color="black", back_color="white").convert("RGB")
+        rgb_img = np.array(pil_img)
+        bgr_img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
+        return cv2.resize(bgr_img, (image_size, image_size), interpolation=cv2.INTER_NEAREST)
+
+    @staticmethod
+    def compose_resultText(nickname, play_time_text, score_now, filter_name):
+        # 휴대폰 스캔 시 메모장/텍스트 앱에서 읽기 쉽게 줄바꿈 텍스트로 구성
+        return (
+            f"Name: {nickname}\n"
+            f"PlayTime: {play_time_text}\n"
+            f"Score: {score_now}\n"
+            f"Filter: {filter_name}"
+        )
+
+
+class ResultTool:
+
+    @staticmethod
+    def get_resultDir():
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        result_dir = os.path.join(base_dir, "Resource", "Data", "GameResult")
+        os.makedirs(result_dir, exist_ok=True)
+        return result_dir
+
+    @staticmethod
+    def sanitize_filePart(text_data):
+        text_now = str(text_data).strip()
+        if not text_now:
+            return "unknown"
+
+        invalid_chars = '<>:"/\\|?*'
+        for bad_char in invalid_chars:
+            text_now = text_now.replace(bad_char, "_")
+
+        text_now = text_now.replace("\n", "_").replace("\r", "_").replace("\t", "_")
+        text_now = text_now.replace(" ", "_")
+        while "__" in text_now:
+            text_now = text_now.replace("__", "_")
+
+        text_now = text_now.strip("._")
+        return text_now or "unknown"
+
+    @staticmethod
+    def normalize_playTime(play_time_text):
+        play_text = str(play_time_text).strip()
+        if (not play_text) or (play_text.upper() == "N/A"):
+            play_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # 파일명에 쓸 수 없는 ':' 제거
+        play_text = play_text.replace(":", "-").replace(" ", "_")
+        return ResultTool.sanitize_filePart(play_text)
+
+    @staticmethod
+    def save_gameResult(player_name, play_time_text, score_now, filter_name):
+        result_obj = {
+            "Name": str(player_name),
+            "PlayTime": str(play_time_text),
+            "Score": int(score_now),
+            "Filter": str(filter_name),
+        }
+
+        result_dir = ResultTool.get_resultDir()
+        name_part = ResultTool.sanitize_filePart(player_name)
+        time_part = ResultTool.normalize_playTime(play_time_text)
+        base_name = f"{name_part}_{time_part}"
+
+        file_path = os.path.join(result_dir, f"{base_name}.json")
+        suffix_idx = 1
+        while os.path.exists(file_path):
+            file_path = os.path.join(result_dir, f"{base_name}_{suffix_idx}.json")
+            suffix_idx += 1
+
+        with open(file_path, "w", encoding="utf-8") as fp:
+            json.dump(result_obj, fp, ensure_ascii=False, indent=2)
+
+        return file_path, result_obj
+
 def camera_set(cap_obj, frame_width=1280, frame_height=720):
     # 카메라에 "요청" 해상도를 설정하고
     cap_obj.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
@@ -413,12 +704,43 @@ def main() -> None:
     # 기본 웹캠(인덱스 0) 열기
     cap_obj = cv2.VideoCapture(0)
     if not cap_obj.isOpened():
-        print("WebCam is not define")
+        print("Webcam is not available")
         return
 
     # 카메라 해상도 요청/적용
     frame_width, frame_height = camera_set(cap_obj, 1280, 720)
     print(frame_width, frame_height)
+
+    # 로그인 사용자 데이터 로드 + QR 디코더 준비
+    user_list = AuthTool.load_userData("users.json")
+    qr_detector = cv2.QRCodeDetector()
+
+    # 로그인/게임 결과 데이터 상태
+    login_user = None
+    login_nickname = "GUEST"
+    login_fail_until = 0.0
+    login_decode_time_last = 0.0
+    login_decode_cooldown = 0.8
+    login_notice_sec = 1.2
+    login_notice_start = 0.0
+    last_game_record = {
+        "play_time": "N/A",
+        "score": 0,
+        "filter": "BASIC",
+    }
+
+    # 데이터 QR 출력 상태
+    data_qr_sec = 30
+    data_qr_start_time = 0.0
+    data_qr_image = None
+    data_qr_text = ""
+
+    # 우상단 EXIT 버튼(로그인/데이터 화면 공통)
+    corner_exit_w = 170
+    corner_exit_h = 80
+    corner_exit_count = 0
+    corner_exit_prev = False
+    corner_exit_time = 0.0
 
     fruit_assets = ImageTool.load_fruitAssets()
     target_count = 6
@@ -452,26 +774,34 @@ def main() -> None:
 
     # 메뉴 버튼 베이스 이미지 로드
     square_asset = ImageTool.load_squareAsset((240, 130))
+    # 세팅 버튼은 1행 5개 배치를 위해 전용 크기를 사용
+    setting_button_w, setting_button_h = 200, 110
+    setting_gap_w = 20
+    # 세팅 버튼 베이스는 요청대로 square_blue.png 사용
+    setting_square_asset = ImageTool.load_squareAsset((setting_button_w, setting_button_h), "square_blue.png")
+
     color_list = [
-        (235, 206, 135),  # sky blue (BGR)
-        (255, 0, 0),      # blue (BGR)
-        (0, 165, 255),    # orange (BGR)
+        (235, 206, 135),  # START: sky blue (BGR)
+        (255, 0, 0),      # SETTING: blue (BGR)
+        (0, 200, 0),      # DATA: green (BGR)
+        (0, 165, 255),    # EXIT: orange (BGR)
     ]
-    spec_list = [
+    menu_spec_list = [
         ("START", "start"),
         ("SETTING", "mode"),
+        ("DATA", "data"),
         ("EXIT", "exit"),
     ]
 
-    # 버튼 레이아웃 계산(3개 버튼을 상단 중앙 정렬)
+    # 버튼 레이아웃 계산(4개 버튼을 상단 중앙 정렬)
     button_w, button_h = 240, 130
     gap_w = 40
-    total_w = button_w * 3 + gap_w * 2
+    total_w = button_w * len(menu_spec_list) + gap_w * (len(menu_spec_list) - 1)
     start_x = max(0, (frame_width - total_w) // 2)
     center_y = 20 + (button_h // 2)
 
     button_list = []
-    for idx, (label_text, action_key) in enumerate(spec_list):
+    for idx, (label_text, action_key) in enumerate(menu_spec_list):
         center_x = start_x + idx * (button_w + gap_w) + (button_w // 2)
         # 같은 square 베이스에 색만 바꿔 버튼별 시각 구분
         tint_sprite = ImageTool.tint_squareAsset(square_asset, color_list[idx])
@@ -487,42 +817,87 @@ def main() -> None:
             }
         )
 
+    # 세팅 화면 필터 버튼(총 5개): 1행 일자 배치
+    filter_spec_list = [
+        ("BASIC", "none"),
+        ("GRAY", "gray"),
+        ("GAUSS", "gaussian"),
+        ("CANNY", "canny"),
+        ("SHARP", "sharpen"),
+    ]
+
+    setting_total_w = setting_button_w * len(filter_spec_list) + setting_gap_w * (len(filter_spec_list) - 1)
+    setting_start_x = max(0, (frame_width - setting_total_w) // 2)
+    setting_center_y = 20 + (setting_button_h // 2)
+
+    setting_button_list = []
+    for idx, (label_text, action_key) in enumerate(filter_spec_list):
+        center_x = setting_start_x + idx * (setting_button_w + setting_gap_w) + (setting_button_w // 2)
+
+        setting_button_list.append(
+            {
+                "label": label_text,
+                "action": action_key,
+                "sprite": setting_square_asset,
+                "center_x": center_x,
+                "center_y": setting_center_y,
+                "width": setting_button_w,
+                "height": setting_button_h,
+            }
+        )
+
     # 상태머신 상수: 문자열 오타를 줄이기 위해 상수로 정의
+    state_login = "login"
+    state_login_notice = "login_notice"
     state_menu = "menu"
     state_countdown = "countdown"
     state_game = "game"
     state_result = "result"
-    state_setting = "setting_notice"
-    state_now = state_menu
+    state_setting = "setting"
+    state_data_qr = "data_qr"
+    state_now = state_login
 
-    # 메뉴 버튼 접촉 판정 임계값들
+    # 출력용 필터 상태(프로그램 시작 시 기본 필터: none)
+    filter_key_now = "none"
+    filter_name_map = {
+        "none": "BASIC",
+        "gray": "GRAY",
+        "gaussian": "GAUSSIAN",
+        "canny": "CANNY",
+        "sharpen": "SHARPEN",
+    }
+
+    # 버튼 접촉 판정 임계값(메뉴/세팅/로그인 공통)
     touch_ratio_min = 0.025
     touch_pixels_min = 120
     touch_required = 2
     touch_cooldown = 0.25
 
-    # 버튼별 상태 저장용 맵
-    # - touch_count_map: 누적 접촉 횟수(2회면 선택)
-    # - over_prev_map  : 직전 프레임 접촉 여부(상승 에지 판정용)
-    # - touch_time_map : 마지막 접촉 시각(쿨다운)
-    touch_count_map = {"start": 0, "mode": 0, "exit": 0}
-    over_prev_map = {"start": False, "mode": False, "exit": False}
-    touch_time_map = {"start": 0.0, "mode": 0.0, "exit": 0.0}
+    # 메뉴 버튼 상태 저장용 맵
+    menu_key_list = [action_key for _, action_key in menu_spec_list]
+    touch_count_map = {key_name: 0 for key_name in menu_key_list}
+    over_prev_map = {key_name: False for key_name in menu_key_list}
+    touch_time_map = {key_name: 0.0 for key_name in menu_key_list}
 
-    # 메뉴 진입 직후 오작동 방지를 위한 입력 잠금 시간
+    # 세팅(필터) 버튼 상태 저장용 맵
+    setting_touch_count_map = {key_name: 0 for _, key_name in filter_spec_list}
+    setting_over_prev_map = {key_name: False for _, key_name in filter_spec_list}
+    setting_touch_time_map = {key_name: 0.0 for _, key_name in filter_spec_list}
+
+    # 메뉴/세팅 진입 직후 오작동 방지를 위한 입력 잠금 시간
     menu_lock_start = 1.6
     menu_lock_reentry = 0.8
+    setting_lock_reentry = 0.6
     menu_enable_time = time.time() + menu_lock_start
+    setting_enable_time = 0.0
 
     # 화면 지속 시간/게임 시간 설정
     score_now = 0
     game_sec = 60
     result_sec = 5
-    setting_sec = 5
 
     game_time_start = 0.0
     result_time_start = 0.0
-    setting_time_start = 0.0
     countdown_time_start = 0.0
 
     # 히트 판정 관련 임계값
@@ -537,35 +912,118 @@ def main() -> None:
     while True:
         ret_ok, frame_img = cap_obj.read()
         if not ret_ok or frame_img is None:
-            print("프레임을 읽지 못했습니다.")
+            print("Failed to read frame.")
             break
 
         # 거울 모드(사용자 기준 좌우가 직관적)
         frame_img = cv2.flip(frame_img, 1)
 
-        # 모션 검출용 전처리
-        gray_frame = cv2.cvtColor(frame_img, cv2.COLOR_BGR2GRAY)
-        curr_filtered = MotionTool.filter_grayFrame(gray_frame)
-
-        # 첫 프레임은 이전 프레임이 없으므로 현재 값을 복사
-        if prev_filtered is None:
-            prev_filtered = curr_filtered.copy()
+        # 모션 검출용 전처리(함수화): 그레이/블러/차분/마스크를 한 번에 처리
+        motion_mask, prev_filtered = MotionTool.build_frameMotion(frame_img, prev_filtered)
 
         now_time = time.time()
 
-        # 움직임 마스크 생성 후, 다음 비교를 위해 현재 프레임 저장
-        motion_mask = MotionTool.build_diffMask(curr_filtered, prev_filtered)
-        prev_filtered = curr_filtered.copy()
-
         # 표시용 캔버스
-        canvas_img = frame_img.copy()
+        # 로그인 화면은 QR 인식 가독성을 위해 필터 미적용 원본으로 고정
+        if state_now == state_login or state_now == state_login_notice:
+            canvas_img = frame_img.copy()
+        else:
+            canvas_img = MotionTool.apply_displayFilter(frame_img, filter_key_now)
+        if state_now == state_login:
+            qr_text, qr_points, qr_mode = AuthTool.detect_loginQr(qr_detector, frame_img)
 
-        if state_now == state_menu:
+            cv2.putText(canvas_img, "LOGIN - QR", (20, frame_height - 55), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
+            cv2.putText(canvas_img, "QR: LOGIN|id|password (nickname optional)", (20, frame_height - 90), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2)
+            cv2.putText(canvas_img, "Show your QR to login", (20, frame_height - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2)
+            cv2.putText(canvas_img, f"QR Detect Mode: {qr_mode}", (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (180, 255, 180), 2)
+
+            if qr_points is not None and len(qr_points) > 0:
+                qr_poly = np.int32(qr_points).reshape(-1, 2)
+                cv2.polylines(canvas_img, [qr_poly], True, (0, 255, 255), 2)
+
+            if qr_text and (now_time - login_decode_time_last) > login_decode_cooldown:
+                login_decode_time_last = now_time
+                login_info = AuthTool.parse_loginQr(qr_text)
+                matched_user = AuthTool.verify_login(login_info, user_list)
+
+                if matched_user is not None:
+                    login_user = matched_user
+                    login_nickname = matched_user.get("nickname") or matched_user.get("id", "GUEST")
+                    login_fail_until = 0.0
+                    corner_exit_count = 0
+                    corner_exit_prev = False
+                    corner_exit_time = 0.0
+                    state_now = state_login_notice
+                    login_notice_start = now_time
+                else:
+                    login_fail_until = now_time + 5.0
+
+            if now_time < login_fail_until:
+                cv2.putText(canvas_img, "Invalid login info. Please check your QR code.", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 80, 255), 2)
+
+            # 로그인 화면 우상단 EXIT 버튼 (2회 접촉)
+            exit_x2 = frame_width - 20
+            exit_y1 = 20
+            exit_x1 = max(0, exit_x2 - corner_exit_w)
+            exit_y2 = exit_y1 + corner_exit_h
+
+            cv2.rectangle(canvas_img, (exit_x1, exit_y1), (exit_x2, exit_y2), (30, 30, 30), -1)
+            cv2.rectangle(canvas_img, (exit_x1, exit_y1), (exit_x2, exit_y2), (0, 165, 255), 2)
+            DrawTool.draw_textCenter(canvas_img, "EXIT", (exit_x1 + exit_x2) // 2, (exit_y1 + exit_y2) // 2, font_scale=0.9, color=(255, 255, 255), thickness=2)
+
+            ratio_now, pixels_now, _ = MotionTool.calc_rectMotion(motion_mask, exit_x1, exit_y1, exit_x2, exit_y2)
+            over_now = (ratio_now >= touch_ratio_min) and (pixels_now >= touch_pixels_min)
+            edge_up = over_now and (not corner_exit_prev)
+            cooldown_ok = (now_time - corner_exit_time) > touch_cooldown
+            if edge_up and cooldown_ok:
+                corner_exit_count = min(touch_required, corner_exit_count + 1)
+                corner_exit_time = now_time
+            corner_exit_prev = over_now
+
+            progress = corner_exit_count / float(touch_required)
+            bar_x1 = exit_x1 + 6
+            bar_x2 = exit_x2 - 6
+            bar_y1 = exit_y2 + 6
+            bar_y2 = exit_y2 + 14
+            cv2.rectangle(canvas_img, (bar_x1, bar_y1), (bar_x2, bar_y2), (60, 60, 60), -1)
+            fill_w = int((bar_x2 - bar_x1) * progress)
+            cv2.rectangle(canvas_img, (bar_x1, bar_y1), (bar_x1 + fill_w, bar_y2), (0, 255, 0), -1)
+
+            if corner_exit_count >= touch_required:
+                break
+
+        elif state_now == state_login_notice:
+            # 로그인 성공 직후, 사용자가 전환을 인지할 수 있도록 짧은 안내 화면 표시
+            elapsed = now_time - login_notice_start
+
+            # 중앙 안내 박스(반투명)
+            overlay_img = canvas_img.copy()
+            box_x1 = max(0, (frame_width // 2) - 320)
+            box_y1 = max(0, (frame_height // 2) - 120)
+            box_x2 = min(frame_width, (frame_width // 2) + 320)
+            box_y2 = min(frame_height, (frame_height // 2) + 120)
+            cv2.rectangle(overlay_img, (box_x1, box_y1), (box_x2, box_y2), (20, 20, 20), -1)
+            cv2.addWeighted(overlay_img, 0.55, canvas_img, 0.45, 0, canvas_img)
+            cv2.rectangle(canvas_img, (box_x1, box_y1), (box_x2, box_y2), (0, 200, 255), 2)
+
+            DrawTool.draw_textCenter(canvas_img, "LOGIN SUCCESS", frame_width // 2, frame_height // 2 - 35, font_scale=1.2, color=(0, 255, 120), thickness=3)
+            DrawTool.draw_textCenter(canvas_img, f"WELCOME {login_user.get('id', 'USER') if isinstance(login_user, dict) else 'USER'}", frame_width // 2, frame_height // 2 + 10, font_scale=0.9, color=(255, 255, 255), thickness=2)
+            DrawTool.draw_textCenter(canvas_img, "Moving to Menu...", frame_width // 2, frame_height // 2 + 45, font_scale=0.8, color=(200, 255, 255), thickness=2)
+
+            if elapsed >= login_notice_sec:
+                state_now = state_menu
+                MenuTool.reset_touchState(touch_count_map, over_prev_map)
+                for key_name in touch_time_map:
+                    touch_time_map[key_name] = 0.0
+                menu_enable_time = now_time + menu_lock_reentry
+
+        elif state_now == state_menu:
             # putText(화면, 문자열, 위치, 폰트, 크기, 색상(BGR), 두께)
             # - "MENU" 라벨을 좌하단에 출력해 현재 상태를 명시
             cv2.putText(canvas_img, "MENU", (20, frame_height - 55), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
             # 사용 방법 안내 문구(2회 접촉 선택)
             cv2.putText(canvas_img, "Touch button 2 times to select (1 touch = 50%)", (20, frame_height - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            cv2.putText(canvas_img, f"Filter: {filter_name_map.get(filter_key_now, 'BASIC')}", (20, frame_height - 90), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (200, 255, 200), 2)
 
             # 이번 프레임에서 실행할 액션(없으면 None)
             action_trigger = None
@@ -640,10 +1098,56 @@ def main() -> None:
                 MenuTool.reset_touchState(touch_count_map, over_prev_map)
 
             elif action_trigger == "mode":
-                # 설정 안내 화면으로 전환
-                setting_time_start = now_time
+                # 필터 설정 화면으로 전환
                 state_now = state_setting
                 MenuTool.reset_touchState(touch_count_map, over_prev_map)
+                MenuTool.reset_touchState(setting_touch_count_map, setting_over_prev_map)
+                for key_name in setting_touch_time_map:
+                    setting_touch_time_map[key_name] = 0.0
+                setting_enable_time = now_time + setting_lock_reentry
+            elif action_trigger == "data":
+                # 데이터 QR 생성 전에 게임 결과를 JSON으로 먼저 저장
+                player_name = login_nickname if login_nickname else "GUEST"
+                play_time_text = last_game_record.get("play_time", "N/A")
+                if str(play_time_text).strip().upper() == "N/A":
+                    play_time_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                score_value = last_game_record.get("score", 0)
+                filter_value = last_game_record.get("filter", "BASIC")
+
+                try:
+                    save_path, saved_result = ResultTool.save_gameResult(
+                        player_name,
+                        play_time_text,
+                        score_value,
+                        filter_value,
+                    )
+                    print(f"[INFO] Game result saved: {save_path}")
+                except Exception as err:
+                    print(f"[WARN] Failed to save game result: {err}")
+                    saved_result = {
+                        "Name": player_name,
+                        "PlayTime": str(play_time_text),
+                        "Score": int(score_value),
+                        "Filter": str(filter_value),
+                    }
+
+                payload_text = QrTool.compose_resultText(
+                    saved_result.get("Name", "GUEST"),
+                    saved_result.get("PlayTime", "N/A"),
+                    saved_result.get("Score", 0),
+                    saved_result.get("Filter", "BASIC"),
+                )
+                data_qr_text = payload_text
+                data_qr_image = QrTool.make_qrImage(payload_text, image_size=360)
+                data_qr_start_time = now_time
+                corner_exit_count = 0
+                corner_exit_prev = False
+                corner_exit_time = 0.0
+                state_now = state_data_qr
+                MenuTool.reset_touchState(touch_count_map, over_prev_map)
+                for key_name in touch_time_map:
+                    touch_time_map[key_name] = 0.0
 
             elif action_trigger == "exit":
                 # 루프 탈출 = 프로그램 종료
@@ -729,6 +1233,11 @@ def main() -> None:
 
             # 게임 시간 종료 시 결과 화면으로 전환
             if elapsed >= game_sec:
+                # DATA QR에 쓸 마지막 게임 결과를 갱신
+                last_game_record["play_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                last_game_record["score"] = score_now
+                last_game_record["filter"] = filter_name_map.get(filter_key_now, "BASIC")
+
                 result_time_start = now_time
                 state_now = state_result
 
@@ -750,19 +1259,133 @@ def main() -> None:
                 menu_enable_time = now_time + menu_lock_reentry
 
         elif state_now == state_setting:
-            # 설정 안내 화면 경과/남은 시간
-            elapsed = now_time - setting_time_start
-            remain = max(0, int(setting_sec - elapsed))
+            # 세팅 화면: 5개 필터 버튼을 메뉴와 같은 2회 접촉 방식으로 선택
+            cv2.putText(canvas_img, "SETTING - FILTER", (20, frame_height - 55), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
+            cv2.putText(canvas_img, "Touch filter button 2 times to apply", (20, frame_height - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            cv2.putText(canvas_img, f"Current: {filter_name_map.get(filter_key_now, 'BASIC')}", (20, frame_height - 90), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (200, 255, 200), 2)
 
-            # 현재는 안내 문구만 보여주고 자동 복귀
-            DrawTool.draw_textCenter(canvas_img, "추후 기능을 추가합니다", frame_width // 2, frame_height // 2 - 20, font_scale=1.0, color=(255, 255, 255), thickness=2)
-            DrawTool.draw_textCenter(canvas_img, "Feature coming soon", frame_width // 2, frame_height // 2 + 20, font_scale=0.9, color=(180, 220, 255), thickness=2)
-            DrawTool.draw_textCenter(canvas_img, f"Back to menu: {remain}", frame_width // 2, frame_height // 2 + 70, font_scale=0.9, color=(200, 200, 200), thickness=2)
+            action_trigger = None
+            input_enabled = now_time >= setting_enable_time
 
-            if elapsed >= setting_sec:
-                # 안내 시간 종료 -> 메뉴 복귀
+            for button in setting_button_list:
+                center_x = button["center_x"]
+                center_y = button["center_y"]
+                width = button["width"]
+                height = button["height"]
+                action_key = button["action"]
+
+                DrawTool.draw_spriteCenter(canvas_img, button["sprite"], center_x, center_y)
+                DrawTool.draw_textCenter(canvas_img, button["label"], center_x, center_y, font_scale=0.8, color=(255, 255, 255), thickness=2)
+
+                x1 = max(0, center_x - width // 2)
+                y1 = max(0, center_y - height // 2)
+                x2 = min(frame_width, center_x + width // 2)
+                y2 = min(frame_height, center_y + height // 2)
+
+                ratio_now, pixels_now, _ = MotionTool.calc_rectMotion(motion_mask, x1, y1, x2, y2)
+                over_now = (ratio_now >= touch_ratio_min) and (pixels_now >= touch_pixels_min)
+
+                border_color = (0, 255, 0) if over_now else (140, 140, 140)
+                cv2.rectangle(canvas_img, (x1, y1), (x2, y2), border_color, 2)
+
+                # 현재 적용 중 필터 버튼은 노란 테두리로 강조
+                if action_key == filter_key_now:
+                    cv2.rectangle(canvas_img, (x1 + 3, y1 + 3), (x2 - 3, y2 - 3), (0, 255, 255), 2)
+
+                if input_enabled:
+                    edge_up = over_now and (not setting_over_prev_map[action_key])
+                    cooldown_ok = (now_time - setting_touch_time_map[action_key]) > touch_cooldown
+
+                    if edge_up and cooldown_ok:
+                        setting_touch_count_map[action_key] = min(touch_required, setting_touch_count_map[action_key] + 1)
+                        setting_touch_time_map[action_key] = now_time
+                        if setting_touch_count_map[action_key] >= touch_required:
+                            action_trigger = action_key
+
+                setting_over_prev_map[action_key] = over_now
+
+                progress = setting_touch_count_map[action_key] / float(touch_required)
+                bar_x1 = x1 + 6
+                bar_x2 = x2 - 6
+                bar_y1 = y2 + 6
+                bar_y2 = y2 + 14
+                cv2.rectangle(canvas_img, (bar_x1, bar_y1), (bar_x2, bar_y2), (60, 60, 60), -1)
+                fill_w = int((bar_x2 - bar_x1) * progress)
+                cv2.rectangle(canvas_img, (bar_x1, bar_y1), (bar_x1 + fill_w, bar_y2), (0, 255, 0), -1)
+
+            if not input_enabled:
+                remain = max(0.0, setting_enable_time - now_time)
+                cv2.putText(canvas_img, f"Setting Ready In: {remain:.1f}s", (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (200, 255, 255), 2)
+
+            if action_trigger is not None:
+                # 필터 적용 후 즉시 메뉴로 복귀(재시작 불필요)
+                filter_key_now = action_trigger
                 state_now = state_menu
+                MenuTool.reset_touchState(setting_touch_count_map, setting_over_prev_map)
+                for key_name in setting_touch_time_map:
+                    setting_touch_time_map[key_name] = 0.0
                 MenuTool.reset_touchState(touch_count_map, over_prev_map)
+                for key_name in touch_time_map:
+                    touch_time_map[key_name] = 0.0
+                menu_enable_time = now_time + menu_lock_reentry
+
+        elif state_now == state_data_qr:
+            elapsed = now_time - data_qr_start_time
+            remain = max(0, int(data_qr_sec - elapsed))
+
+            cv2.putText(canvas_img, "DATA QR", (20, frame_height - 55), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
+            cv2.putText(canvas_img, "Scan with your phone", (20, frame_height - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2)
+            cv2.putText(canvas_img, f"Back to menu: {remain}", (20, frame_height - 90), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (200, 255, 200), 2)
+
+            if data_qr_image is not None:
+                qr_h, qr_w = data_qr_image.shape[:2]
+                qr_x1 = max(0, (frame_width // 2) - (qr_w // 2))
+                qr_y1 = max(0, (frame_height // 2) - (qr_h // 2))
+                qr_x2 = min(frame_width, qr_x1 + qr_w)
+                qr_y2 = min(frame_height, qr_y1 + qr_h)
+                canvas_img[qr_y1:qr_y2, qr_x1:qr_x2] = data_qr_image[0:(qr_y2 - qr_y1), 0:(qr_x2 - qr_x1)]
+            else:
+                DrawTool.draw_textCenter(canvas_img, "qrcode package not ready", frame_width // 2, frame_height // 2, font_scale=0.9, color=(0, 80, 255), thickness=2)
+
+            # 데이터 화면 우상단 EXIT 버튼 (2회 접촉)
+            exit_x2 = frame_width - 20
+            exit_y1 = 20
+            exit_x1 = max(0, exit_x2 - corner_exit_w)
+            exit_y2 = exit_y1 + corner_exit_h
+
+            cv2.rectangle(canvas_img, (exit_x1, exit_y1), (exit_x2, exit_y2), (30, 30, 30), -1)
+            cv2.rectangle(canvas_img, (exit_x1, exit_y1), (exit_x2, exit_y2), (0, 165, 255), 2)
+            DrawTool.draw_textCenter(canvas_img, "EXIT", (exit_x1 + exit_x2) // 2, (exit_y1 + exit_y2) // 2, font_scale=0.9, color=(255, 255, 255), thickness=2)
+
+            ratio_now, pixels_now, _ = MotionTool.calc_rectMotion(motion_mask, exit_x1, exit_y1, exit_x2, exit_y2)
+            over_now = (ratio_now >= touch_ratio_min) and (pixels_now >= touch_pixels_min)
+            edge_up = over_now and (not corner_exit_prev)
+            cooldown_ok = (now_time - corner_exit_time) > touch_cooldown
+            if edge_up and cooldown_ok:
+                corner_exit_count = min(touch_required, corner_exit_count + 1)
+                corner_exit_time = now_time
+            corner_exit_prev = over_now
+
+            progress = corner_exit_count / float(touch_required)
+            bar_x1 = exit_x1 + 6
+            bar_x2 = exit_x2 - 6
+            bar_y1 = exit_y2 + 6
+            bar_y2 = exit_y2 + 14
+            cv2.rectangle(canvas_img, (bar_x1, bar_y1), (bar_x2, bar_y2), (60, 60, 60), -1)
+            fill_w = int((bar_x2 - bar_x1) * progress)
+            cv2.rectangle(canvas_img, (bar_x1, bar_y1), (bar_x1 + fill_w, bar_y2), (0, 255, 0), -1)
+
+            if corner_exit_count >= touch_required:
+                break
+
+            if elapsed >= data_qr_sec:
+                state_now = state_menu
+                corner_exit_count = 0
+                corner_exit_prev = False
+                corner_exit_time = 0.0
+                MenuTool.reset_touchState(touch_count_map, over_prev_map)
+                for key_name in touch_time_map:
+                    touch_time_map[key_name] = 0.0
                 menu_enable_time = now_time + menu_lock_reentry
 
         # 최종 합성 프레임 출력
@@ -779,4 +1402,42 @@ def main() -> None:
 if __name__ == "__main__":
     # 파일 단독 실행 시에만 main() 진입
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
