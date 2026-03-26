@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Result Viewer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --line: #334155;
+      --text: #e5e7eb;
+      --sub: #94a3b8;
+      --accent: #22d3ee;
+      --good: #34d399;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Segoe UI, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top left, #1e293b, var(--bg));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(760px, 100%);
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .sub { color: var(--sub); margin-bottom: 16px; }
+    .grid {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 10px 14px;
+      margin: 14px 0 18px;
+      align-items: center;
+    }
+    .k {
+      color: var(--sub);
+      font-weight: 600;
+      border-bottom: 1px dashed #334155;
+      padding: 6px 0;
+    }
+    .v {
+      color: var(--text);
+      font-size: 19px;
+      border-bottom: 1px dashed #334155;
+      padding: 6px 0;
+      word-break: break-word;
+    }
+    .ok {
+      margin-top: 10px;
+      color: var(--good);
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .warn {
+      margin-top: 10px;
+      color: #fbbf24;
+      font-weight: 700;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+    .raw {
+      margin-top: 14px;
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: Consolas, monospace;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      font-size: 13px;
+      max-height: 220px;
+      overflow: auto;
+    }
+    .tip {
+      margin-top: 14px;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    code {
+      background: #0b1220;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 1px 6px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Game Result</h1>
+    <div class="sub">This page reads result data from the URL query value <code>?d=...</code>.</div>
+
+    <div id="status" class="warn">Waiting for data...</div>
+    <section id="resultBox" style="display:none;">
+      <div class="grid">
+        <div class="k">Name</div><div class="v" id="nameVal">-</div>
+        <div class="k">PlayTime</div><div class="v" id="timeVal">-</div>
+        <div class="k">Score</div><div class="v" id="scoreVal">-</div>
+        <div class="k">Filter</div><div class="v" id="filterVal">-</div>
+        <div class="k">LoginID</div><div class="v" id="idVal">-</div>
+      </div>
+      <div class="ok">Result loaded successfully.</div>
+      <div class="raw" id="rawJson"></div>
+    </section>
+
+    <div class="tip">
+      If you open this page without <code>?d=</code>, it cannot show a result.<br/>
+      Example URL: <code>result_viewer.html?d=BASE64_URL_SAFE_JSON</code>
+    </div>
+  </main>
+
+  <script>
+    function decodeBase64UrlToText(b64url) {
+      const normalized = decodeURIComponent(b64url).replace(/-/g, '+').replace(/_/g, '/');
+      const padding = '='.repeat((4 - (normalized.length % 4)) % 4);
+      const binary = atob(normalized + padding);
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function renderResult(obj) {
+      const safe = (v) => (v === undefined || v === null || v === '') ? '-' : String(v);
+      document.getElementById('nameVal').textContent = safe(obj.Name);
+      document.getElementById('timeVal').textContent = safe(obj.PlayTime);
+      document.getElementById('scoreVal').textContent = safe(obj.Score);
+      document.getElementById('filterVal').textContent = safe(obj.Filter);
+      document.getElementById('idVal').textContent = safe(obj.LoginID);
+      document.getElementById('rawJson').textContent = JSON.stringify(obj, null, 2);
+      document.getElementById('status').style.display = 'none';
+      document.getElementById('resultBox').style.display = 'block';
+    }
+
+    (function main() {
+      const params = new URLSearchParams(window.location.search);
+      const packed = params.get('d');
+      if (!packed) {
+        document.getElementById('status').textContent = 'No query data found. Add ?d=... to this URL.';
+        return;
+      }
+      try {
+        const jsonText = decodeBase64UrlToText(packed);
+        const obj = JSON.parse(jsonText);
+        renderResult(obj);
+      } catch (err) {
+        document.getElementById('status').textContent = 'Failed to decode data from URL.\n' + String(err);
+      }
+    })();
+  </script>
+</body>
+</html>

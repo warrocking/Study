@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="panel">
+      <h1>{{ title }}</h1>
+
+      {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
+
+      {% if result %}
+      <div class="grid">
+        <div class="k">Name</div><div class="v">{{ result.Name }}</div>
+        <div class="k">PlayTime</div><div class="v">{{ result.PlayTime }}</div>
+        <div class="k">Score</div><div class="v">{{ result.Score }}</div>
+        <div class="k">Filter</div><div class="v">{{ result.Filter }}</div>
+        <div class="k">LoginID</div><div class="v">{{ result.LoginID }}</div>
+        <div class="k">ShareCode</div><div class="v">{{ result.ShareCode }}</div>
+        <div class="k">ExpiresAt</div><div class="v">{{ result.ExpiresAt }}</div>
+      </div>
+      <p class="ok">This page is served by your game result server.</p>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

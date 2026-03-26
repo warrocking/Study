@@ -1,0 +1,91 @@
+﻿:root {
+  --bg1: #0f172a;
+  --bg2: #111827;
+  --line: #334155;
+  --text: #e5e7eb;
+  --sub: #94a3b8;
+  --accent: #22d3ee;
+  --good: #34d399;
+  --bad: #f87171;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Segoe UI, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top left, #1e293b, var(--bg1));
+}
+
+.wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.panel {
+  width: min(760px, 100%);
+  background: rgba(17, 24, 39, 0.94);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 10px 14px;
+  align-items: center;
+}
+
+.k {
+  color: var(--sub);
+  font-weight: 700;
+  border-bottom: 1px dashed var(--line);
+  padding: 8px 0;
+}
+
+.v {
+  color: var(--text);
+  font-size: 19px;
+  border-bottom: 1px dashed var(--line);
+  padding: 8px 0;
+  word-break: break-word;
+}
+
+.ok {
+  margin-top: 14px;
+  color: var(--good);
+  font-weight: 700;
+}
+
+.error {
+  margin: 10px 0 0;
+  color: var(--bad);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 110px 1fr;
+  }
+
+  .v {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+}

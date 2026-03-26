@@ -1,0 +1,26 @@
+﻿services:
+  - type: web
+    name: opencv-game-result-server
+    env: python
+    plan: free
+    region: singapore
+    rootDir: Code/server_app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT app:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: GAME_SERVER_DB_PATH
+        value: /var/data/game_server.db
+      - key: ADMIN_LOGIN_ID
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NICKNAME
+        value: admin
+
+disks:
+  - name: data-disk
+    mountPath: /var/data
+    sizeGB: 1

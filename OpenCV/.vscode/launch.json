@@ -1,0 +1,15 @@
+﻿{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File (OpenCV venv)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${fileDirname}",
+            "python": "C:\\Study\\OpenCV\\.venv\\Scripts\\python.exe",
+            "justMyCode": true
+        }
+    ]
+}

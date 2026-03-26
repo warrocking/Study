@@ -1,0 +1,1 @@
+file:///C:/Study/OpenCV/Code/web_demo/result_viewer.html?d=eyJOYW1lIjoiYWRtaW4iLCJQbGF5VGltZSI6IjIwMjYtMDMtMjYgMDk6NTI6MTkiLCJTY29yZSI6MCwiRmlsdGVyIjoiQkFTSUMiLCJMb2dpbklEIjoiYWRtaW4ifQ
