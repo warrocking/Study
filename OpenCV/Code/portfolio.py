@@ -2,44 +2,85 @@
 OpenCV 손동작 메뉴 + 과일 터치 게임
 
 [프로그램 목적]
-- 카메라 영상의 "움직임"을 입력으로 사용해 메뉴 선택과 과일 맞추기 게임을 진행합니다.
-- 마우스/키보드 없이 손동작만으로 시작/설정/종료 선택, 게임 플레이, 결과 표시까지 처리합니다.
+- 카메라 영상의 "움직임"을 입력으로 사용해 메뉴 선택, 게임 진행, 결과 확인을 처리합니다.
+- 마우스/키보드 없이 손동작만으로 로그인, 시작, 필터 설정, 데이터 QR 확인, 종료까지 수행합니다.
 
 [메인 실행 흐름]
 1) 초기화
-- 카메라 해상도 설정, 리소스 이미지 로드, Target/TargetPool 생성, 상태 변수 초기화를 수행합니다.
-2) 프레임 입력 + 전처리
-- 프레임 좌우반전 -> 그레이 변환 -> GaussianBlur -> 프레임 차분(absdiff) -> 이진화(threshold) 순으로
+- 카메라 해상도 설정, 과일/버튼 이미지 로드, 타겟 풀(TargetPool) 준비, 상태 변수 초기화를 수행합니다.
+2) 프레임 입력 + 움직임 마스크 생성
+- 프레임 좌우반전 -> 그레이 변환 -> 블러/노이즈 완화 -> 프레임 차분(absdiff) -> threshold -> morphology로
   움직임 마스크를 생성합니다.
-3) 상태 머신(state_now) 분기
-- menu: 상단 버튼 ROI의 움직임 비율로 버튼 선택을 판정합니다.
-- countdown: 3, 2, 1, Start 텍스트 애니메이션 후 game 상태로 전환합니다.
-- game: 타겟 스폰/재스폰, 원형 ROI 움직임량 기반 히트 판정, 점수 갱신을 수행합니다.
-- result: 점수와 안내를 일정 시간 보여준 뒤 menu로 복귀합니다.
-- setting: "추후 기능" 안내와 카운트다운 후 menu로 복귀합니다.
-4) 렌더링
-- 배경 프레임 위에 버튼/텍스트/타겟 스프라이트를 합성해 최종 화면을 만듭니다.
-5) 종료
-- ESC 또는 종료 버튼 선택 시 루프를 종료하고 카메라/창 리소스를 해제합니다.
+3) 로그인 상태(login / login_notice)
+- login: QR 로그인 정보(`LOGIN|id|password|nickname`)를 인식/검증합니다.
+- login_notice: 로그인 성공 안내를 잠깐 보여준 뒤 menu로 이동합니다.
+4) 메뉴 상태(menu)
+- START / SETTING / DATA / EXIT 버튼을 ROI 움직임 입력으로 판정합니다(2회 접촉 방식).
+5) 카운트다운 상태(countdown)
+- 3 -> 2 -> 1 -> Start 애니메이션 후 game 상태로 전환합니다.
+6) 게임 상태(game)
+- 타겟 활성/재스폰, 원형 ROI 히트 판정, 점수/시간 갱신, 게임 종료 시 last_game_record 갱신을 수행합니다.
+7) 결과 상태(result)
+- 최종 점수 화면을 일정 시간 보여준 뒤 menu로 복귀합니다.
+8) 설정 상태(setting)
+- 기본/흑백/가우시안/캐니/샤픈 필터를 버튼으로 선택하고 즉시 menu로 복귀합니다.
+9) 데이터 상태(data_prepare / data_qr)
+- 현재 로그인 ID의 최신 결과 JSON을 선택(없으면 fallback 생성) -> 결과 텍스트 QR 생성/표시를 수행합니다.
+10) 종료
+- ESC 입력 또는 EXIT 버튼 선택 시 루프를 종료하고 카메라/창 리소스를 해제합니다.
 
 [적용된 핵심 처리와 목적]
-- GaussianBlur: 카메라 노이즈와 미세 떨림을 줄여 오검출(가짜 움직임)을 완화합니다.
-- absdiff(프레임 차분): 이전 프레임과 현재 프레임의 차이를 계산해 "실제 움직임 후보"를 찾습니다.
-- threshold(이진화): 작은 밝기 변화는 버리고, 의미 있는 변화만 0/255 마스크로 남깁니다.
-- morphology(open/close): 소금-후추 노이즈 제거 + 끊긴 영역 연결로 안정적인 움직임 영역을 만듭니다.
-- ROI 비율 판정: 전체 화면이 아니라 버튼/타겟 주변만 검사해 입력 정확도를 높입니다.
-- TargetPool(풀링형 관리): 타겟을 매번 생성/삭제하지 않고 활성/비활성으로 재사용해 처리 부담을 줄입니다.
-- 가드타임/쿨다운: 스폰 직후 즉시 제거/연속 중복 히트를 막아 게임 판정을 안정화합니다.
-- 알파 블렌딩(draw_sprite_center): PNG 투명 채널을 유지해 과일 이미지를 자연스럽게 합성합니다.
-- 상태 머신 구조: 메뉴/게임/결과 로직을 분리해 코드 가독성과 유지보수성을 높입니다.
+- 프레임 차분(absdiff): 이전 프레임과 현재 프레임의 변화를 추출해 "움직임 후보"를 계산합니다.
+- threshold(이진화): 작은 밝기 변화는 제거하고 의미 있는 변화만 0/255 마스크로 남깁니다.
+- morphology(open/close): 점 잡음 제거와 끊긴 영역 연결로 움직임 마스크를 안정화합니다.
+- 블러(gaussian/median): 조명 깜빡임, 센서 잡음, 미세 떨림을 줄여 오검출을 완화합니다.
+- ROI 비율 판정(calc_rectMotion): 전체 화면이 아닌 버튼/타겟 주변만 검사해 입력 정확도를 높입니다.
+- 2회 접촉 + 쿨다운: 메뉴/설정/종료 버튼의 우발 입력을 줄이고 의도한 동작만 반영합니다.
+- TargetPool(풀링 관리): 타겟을 매번 생성/삭제하지 않고 활성/비활성으로 재사용해 부담을 줄입니다.
+- 스폰 가드타임/히트 쿨다운: 스폰 직후 즉시 제거/연속 중복 히트 문제를 완화합니다.
+- 알파 블렌딩(draw_spriteCenter): PNG 투명 채널(BGRA)을 유지해 과일/버튼 이미지를 자연스럽게 합성합니다.
+- QR 로그인 전처리(AuthTool.detect_loginQr):
+  원본/그레이/CLAHE/샤픈/Otsu/Adaptive 후보 영상을 순차 시도해 인식 안정성을 높입니다.
+- 표시 필터(MotionTool.apply_displayFilter):
+  none, gray, gaussian, canny, sharpen 필터를 설정 화면에서 즉시 전환해 카메라 표시를 변경합니다.
+- 결과 데이터 관리(ResultTool + QrTool):
+  게임 결과를 JSON으로 저장/조회하고, 최신 결과를 텍스트 QR로 변환해 휴대폰 스캔이 가능하도록 합니다.
+- 상태 머신(state_now): 로그인/메뉴/게임/설정/데이터 흐름을 분리해 가독성과 유지보수성을 높입니다.
 
-[핵심 클래스 역할]
-- Target: 타겟 1개의 위치, 반지름, 활성 상태, 재등장 시각, 히트 시각을 관리합니다.
-- TargetPool: 여러 Target의 등장/비등장 스케줄을 묶어서 제어합니다.
-- ImageTool: 파일 경로 탐색, 리소스 이미지 로드/전처리 유틸을 제공합니다.
-- DrawTool: 텍스트/도형/스프라이트 출력 함수를 제공합니다.
-- MotionTool: 움직임 마스크 생성과 입력 판정(ROI 기반)을 담당합니다.
-- MenuTool: 버튼 상태 초기화/업데이트 등 메뉴 입력 보조를 담당합니다.
+[핵심 클래스 및 함수]
+- Target: 타겟 1개의 위치/활성 상태/재등장 타이밍/점수 정보를 관리합니다.
+  - activate_target(...): 랜덤 위치로 타겟을 활성화하고 스폰 가드타임을 설정합니다.
+  - deactivate_target(...): 타겟을 비활성화하고 다음 재등장 시간을 예약합니다.
+- TargetPool: 여러 Target 객체를 묶어 활성/재스폰을 일괄 관리합니다.
+  - spawn_targets(...): 지정 개수만 활성화하고 나머지는 비활성화합니다.
+  - list_activeTargets(): 현재 화면 판정 대상(활성 타겟)만 반환합니다.
+  - update_respawnTargets(...): 재등장 시간이 지난 타겟을 자동 재활성화합니다.
+- ImageTool: 리소스 이미지 로드/채널 통일(BGRA)/fallback 생성 유틸을 제공합니다.
+  - convert_rgbaImage(...): 모든 이미지를 BGRA 4채널로 통일합니다.
+  - load_fruitAssets(): 과일 리소스를 로드하고 실패 시 fallback 스프라이트를 준비합니다.
+  - load_squareAsset(...): 버튼 배경 이미지를 로드하고 실패 시 fallback 버튼을 생성합니다.
+- DrawTool: 스프라이트/텍스트 렌더링 보조 유틸입니다.
+  - draw_spriteCenter(...): 중심 좌표 기준으로 알파 합성 렌더링합니다.
+  - draw_textCenter(...): 텍스트를 중앙 정렬로 그려 UI 가독성을 높입니다.
+- MotionTool: 움직임 마스크 생성, ROI 입력 판정, 표시 필터 적용을 담당합니다.
+  - build_frameMotion(...): 프레임 기반 움직임 마스크를 생성합니다.
+  - calc_rectMotion(...): 사각 ROI의 움직임 비율/픽셀 수를 계산합니다.
+  - apply_displayFilter(...): 현재 설정된 카메라 표시 필터를 적용합니다.
+- MenuTool: 메뉴/설정/코너 버튼의 터치 상태 초기화를 담당합니다.
+  - reset_touchState(...): 접촉 횟수/이전 접촉 플래그를 초기화합니다.
+- AuthTool: 로그인 사용자 데이터 로드, QR 파싱/검증, QR 인식 전처리를 담당합니다.
+  - load_userData(...): Resource/Data/users.json 계정을 로드합니다.
+  - detect_loginQr(...): 다양한 전처리 후보로 로그인 QR 인식을 시도합니다.
+  - verify_login(...): 로그인 ID/비밀번호 기준으로 인증합니다.
+- QrTool: 결과 텍스트 구성 및 QR 이미지 생성을 담당합니다.
+  - compose_resultText(...): Name/PlayTime/Score/Filter를 QR용 문자열로 만듭니다.
+  - make_qrImage(...): 텍스트를 QR 이미지(BGR)로 생성합니다.
+- ResultTool: 결과 JSON 저장/파일명 정리/최신 기록 조회를 담당합니다.
+  - save_gameResult(...): 결과를 개별 JSON 파일로 저장합니다.
+  - load_latestResult(...): 로그인 ID 기준 최신 기록 1개를 선택합니다.
+- camera_set(...): 요청 해상도를 카메라에 설정하고 실제 적용값을 반환합니다.
+- random_position(...): 반지름을 고려해 화면 밖으로 나가지 않는 랜덤 좌표를 생성합니다.
+- main(): 전체 상태 머신과 렌더링 루프를 실행하는 프로그램 진입점입니다.
 """
 
 # 경로 처리(리소스 폴더 탐색), 랜덤 값(위치/점수), 시간(쿨다운/경과시간) 계산용 모듈
@@ -460,6 +501,11 @@ class MenuTool:
         for key_name in over_prev_map:
             over_prev_map[key_name] = False
 
+# Login utility class
+# - load user account list
+# - parse login QR text
+# - multi-preprocess QR detection
+# - validate id/password
 class AuthTool:
 
     @staticmethod
@@ -497,7 +543,7 @@ class AuthTool:
 
     @staticmethod
     def parse_loginQr(qr_text):
-        # Allowed formats (nickname is optional):
+        # Supported formats (nickname optional):
         # 1) LOGIN|id|password|nickname
         # 2) LOGIN|id|password
         # 3) id|password|nickname
@@ -508,7 +554,7 @@ class AuthTool:
 
         text_now = qr_text.strip()
 
-        # Try JSON first
+        # 1st try: JSON format
         if text_now.startswith("{") and text_now.endswith("}"):
             try:
                 json_obj = json.loads(text_now)
@@ -521,9 +567,10 @@ class AuthTool:
             except Exception:
                 return None
 
-        # Parse pipe format
+        # 2nd try: '|' separated text format
         parts = [part.strip() for part in text_now.split("|")]
         if parts and parts[0].upper() == "LOGIN":
+            # Remove LOGIN prefix before reading id/password
             parts = parts[1:]
 
         if len(parts) < 2:
@@ -560,11 +607,17 @@ class AuthTool:
         )
 
         candidate_list = [
+            # raw: original frame
             ("raw", frame_img),
+            # gray: grayscale frame
             ("gray", gray_img),
+            # clahe: local contrast enhanced frame
             ("clahe", clahe_img),
+            # sharp: sharpened frame
             ("sharp", sharpen_img),
+            # otsu: global-threshold binary frame
             ("otsu", otsu_img),
+            # adapt: adaptive-threshold binary frame
             ("adapt", adapt_img),
         ]
 
@@ -576,6 +629,9 @@ class AuthTool:
         return "", None, "none"
     @staticmethod
     def verify_login(login_info, user_list):
+        # Validation policy:
+        # - compare id/password with users.json
+        # - nickname is display/save data, not auth key
         if not login_info:
             return None
         id_text = str(login_info.get("id", "")).strip()
@@ -589,13 +645,16 @@ class AuthTool:
                 return user_obj
         return None
 
+# Utility class for converting result text to QR image
 class QrTool:
 
     @staticmethod
     def make_qrImage(text_data, image_size=360):
+        # Return None when qrcode package is missing or text is empty.
         if not text_data or qrcode is None:
             return None
 
+        # ERROR_CORRECT_M balances scan stability and payload size.
         qr_obj = qrcode.QRCode(
             version=None,
             error_correction=qrcode.constants.ERROR_CORRECT_M,
@@ -605,9 +664,11 @@ class QrTool:
         qr_obj.add_data(text_data)
         qr_obj.make(fit=True)
 
+        # Convert qrcode(PIL) image to OpenCV BGR format.
         pil_img = qr_obj.make_image(fill_color="black", back_color="white").convert("RGB")
         rgb_img = np.array(pil_img)
         bgr_img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
+        # INTER_NEAREST keeps QR edges sharp for better scanning.
         return cv2.resize(bgr_img, (image_size, image_size), interpolation=cv2.INTER_NEAREST)
 
     @staticmethod
@@ -621,10 +682,12 @@ class QrTool:
         )
 
 
+# Utility class for saving/loading game result JSON files
 class ResultTool:
 
     @staticmethod
     def get_resultDir():
+        # Ensure result directory exists and return its path.
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         result_dir = os.path.join(base_dir, "Resource", "Data", "GameResult")
         os.makedirs(result_dir, exist_ok=True)
@@ -632,6 +695,7 @@ class ResultTool:
 
     @staticmethod
     def sanitize_filePart(text_data):
+        # Replace unsafe filename characters with safe separators.
         text_now = str(text_data).strip()
         if not text_now:
             return "unknown"
@@ -650,6 +714,7 @@ class ResultTool:
 
     @staticmethod
     def normalize_playTime(play_time_text):
+        # Normalize play time string for safe filename usage.
         play_text = str(play_time_text).strip()
         if (not play_text) or (play_text.upper() == "N/A"):
             play_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -660,6 +725,7 @@ class ResultTool:
 
     @staticmethod
     def save_gameResult(player_name, play_time_text, score_now, filter_name, login_id=""):
+        # Build standardized result object for save and reuse.
         result_obj = {
             "Name": str(player_name),
             "PlayTime": str(play_time_text),
@@ -668,6 +734,7 @@ class ResultTool:
             "LoginID": str(login_id).strip(),
         }
 
+        # Base filename: name_time. Add suffix when duplicate exists.
         result_dir = ResultTool.get_resultDir()
         name_part = ResultTool.sanitize_filePart(player_name)
         time_part = ResultTool.normalize_playTime(play_time_text)
@@ -686,6 +753,7 @@ class ResultTool:
 
     @staticmethod
     def parse_playTime(play_time_text):
+        # Parse play time string to datetime for latest sort.
         try:
             return datetime.strptime(str(play_time_text).strip(), "%Y-%m-%d %H:%M:%S")
         except Exception:
@@ -693,6 +761,8 @@ class ResultTool:
 
     @staticmethod
     def load_latestResult(login_id):
+        # Find one latest result matched to current login id.
+        # Sort key: PlayTime first, file modified time second.
         result_dir = ResultTool.get_resultDir()
         login_text = str(login_id).strip()
 
@@ -717,7 +787,7 @@ class ResultTool:
             record_id = str(result_obj.get("LoginID", "")).strip()
             record_name = str(result_obj.get("Name", "")).strip()
 
-            # ?? ?? ??? ???? id ??
+            # If login id is provided, keep only matching records.
             if login_text and (record_id != login_text and record_name != login_text):
                 continue
 
@@ -1160,12 +1230,12 @@ def main() -> None:
                     setting_touch_time_map[key_name] = 0.0
                 setting_enable_time = now_time + setting_lock_reentry
             elif action_trigger == "data":
-                # ???? id ???? ?? ?? ?? JSON ??
+                # Load latest result JSON for current login id.
                 login_id = login_user.get("id", "GUEST") if isinstance(login_user, dict) else "GUEST"
                 selected_obj, selected_path = ResultTool.load_latestResult(login_id)
 
                 if selected_obj is None:
-                    # ?? id ??? ??? ?? ??? ?? ?? 1? ??
+                    # If none exists, create one fallback record.
                     fallback_name = login_nickname if login_nickname else login_id
                     fallback_play = last_game_record.get("play_time", "N/A")
                     if str(fallback_play).strip().upper() == "N/A":
@@ -1217,7 +1287,7 @@ def main() -> None:
                 )
                 data_qr_image = QrTool.make_qrImage(data_qr_text, image_size=360)
 
-                # 5? ?? "?? ??? ?? ?" ?? ? QR ???? ??
+                # Show 5-second prepare screen, then move to QR screen.
                 data_prepare_start_time = now_time
                 corner_exit_count = 0
                 corner_exit_prev = False
@@ -1315,6 +1385,23 @@ def main() -> None:
                 last_game_record["play_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 last_game_record["score"] = score_now
                 last_game_record["filter"] = filter_name_map.get(filter_key_now, "BASIC")
+
+                # 게임 1회 종료 시점마다 결과 JSON을 자동 저장한다.
+                save_name = login_nickname if str(login_nickname).strip() else "GUEST"
+                save_login_id = "GUEST"
+                if isinstance(login_user, dict):
+                    save_login_id = str(login_user.get("id", "GUEST")).strip() or "GUEST"
+                try:
+                    saved_path, _ = ResultTool.save_gameResult(
+                        save_name,
+                        last_game_record["play_time"],
+                        last_game_record["score"],
+                        last_game_record["filter"],
+                        login_id=save_login_id,
+                    )
+                    print(f"[INFO] Game result saved: {saved_path}")
+                except Exception as err:
+                    print(f"[WARN] Failed to save game result: {err}")
 
                 result_time_start = now_time
                 state_now = state_result
@@ -1505,6 +1592,7 @@ def main() -> None:
 if __name__ == "__main__":
     # 파일 단독 실행 시에만 main() 진입
     main()
+
 
 
 
