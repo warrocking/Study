@@ -1,0 +1,17 @@
+{
+  "server_ip": "192.168.0.78",
+  "allowed_client_ip": "192.168.0.137",
+  "port": 5000,
+  "default_robot": "tb3_1",
+  "default_topic": "/cmd_vel",
+  "default_lx": 0.05,
+  "default_az": 0.0,
+  "default_turn_az": 0.5,
+  "default_dur": 2.0,
+  "default_hz": 10,
+  "default_timeout": 5.0,
+  "min_free_mb": 100,
+  "camera_index": 0,
+  "check_camera_on_start": false,
+  "check_external_internet": false
+}
