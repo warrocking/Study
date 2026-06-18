@@ -1,0 +1,21 @@
+{
+  "camera_index": 0,
+  "tile_w": 320,
+  "tile_h": 240,
+  "cols": 3,
+  "canny_low": 30,
+  "canny_high": 160,
+  "threshold_value": 127,
+  "min_contour_area": 500,
+  "h_low": 20,
+  "h_high": 35,
+  "s_low": 80,
+  "s_high": 255,
+  "v_low": 80,
+  "v_high": 255,
+  "hog_every": 10,
+  "motion_warn_ratio": 0.05,
+  "motion_pause_ratio": 0.15,
+  "edge_warn_ratio": 0.04,
+  "edge_pause_ratio": 0.1
+}
