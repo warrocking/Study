@@ -1,0 +1,58 @@
+{
+  "version": "0.6",
+  "schema": "control_info_v0.6",
+  "control_ui": {
+    "id": "control_ui",
+    "name": "Control UI Computer",
+    "enabled": true,
+    "ip": "192.168.3.59",
+    "hostname": "ubuntu22",
+    "user": "ubuntu",
+    "json": {
+      "health": {
+        "server_ip": "192.168.3.61",
+        "server_port": 4000,
+        "protocol": "tcp_utf8_ndjson",
+        "message_type_in": "control_health_request",
+        "message_type_out": "control_health_response"
+      },
+      "command": {
+        "server_ip": "192.168.3.61",
+        "server_port": 4001,
+        "protocol": "tcp_utf8_ndjson",
+        "message_type_in": "control_command_request",
+        "message_type_out": "operator_response"
+      },
+      "data_control": {
+        "server_ip": "192.168.3.61",
+        "server_port": 4002,
+        "protocol": "tcp_utf8_ndjson",
+        "message_type_in": "control_data_request",
+        "message_type_out": "control_data_response"
+      }
+    },
+    "ssh": {
+      "enabled": true,
+      "direction": "server_to_control_only",
+      "port": 22,
+      "connect_timeout": 5,
+      "identity_file": "",
+      "control_to_server_ssh_allowed": false,
+      "server_to_control_rsync_allowed": true
+    },
+    "paths": {
+      "image_cache_dir": "/home/ubuntu/openCV/cache/images",
+      "control_base_dir": "/home/ubuntu/turtlebot_control",
+      "control_image_cache_dir": "/home/ubuntu/turtlebot_control/data/images",
+      "control_log_cache_dir": "/home/ubuntu/turtlebot_control/data/logs",
+      "control_receive_dir": "/home/ubuntu/turtlebot_control/data/from_server",
+      "control_map_receive_dir": "/home/ubuntu/control_laptop/control_laptop_map"
+    }
+  },
+  "image_transfer": {
+    "method": "rsync_over_ssh",
+    "direction": "server_push",
+    "default_server_path": "/home/admin_kyj/turtlebot_server/data/images/latest/tb1_latest_map.png",
+    "delete_after_view": true
+  }
+}

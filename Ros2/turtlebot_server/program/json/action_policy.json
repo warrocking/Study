@@ -1,0 +1,334 @@
+{
+  "schema": "fleet_action_policy_v0.5.1",
+  "version": "0.5.1",
+  "actions": {
+    "emergency_stop": {
+      "priority": 1,
+      "command_type": "emergency",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["all"]
+    },
+    "all_stop": {
+      "priority": 2,
+      "command_type": "emergency",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["all"]
+    },
+    "robot_stop": {
+      "priority": 3,
+      "command_type": "control",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi"]
+    },
+    "pause_all": {
+      "priority": 4,
+      "command_type": "control",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["AUTO", "MANUAL", "MAPPING", "NAVIGATION"],
+      "target_scope_allowed": ["all"]
+    },
+    "pause_robot": {
+      "priority": 5,
+      "command_type": "control",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["AUTO", "MANUAL", "MAPPING", "NAVIGATION"],
+      "target_scope_allowed": ["single", "multi"]
+    },
+    "cancel_job": {
+      "priority": 6,
+      "command_type": "control",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["AUTO", "MANUAL", "MAPPING", "NAVIGATION", "PAUSED"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "reset_all_jobs": {
+      "priority": 7,
+      "command_type": "control",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["PAUSED", "SERVICE", "ERROR"],
+      "target_scope_allowed": ["all"]
+    },
+    "clear_error": {
+      "priority": 8,
+      "command_type": "control",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ERROR", "SERVICE"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "clear_emergency": {
+      "priority": 7,
+      "command_type": "control",
+      "blocking_type": "HARD",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["EMERGENCY", "SERVICE"],
+      "target_scope_allowed": ["all"]
+    },
+    "status_request": {
+      "priority": 10,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "robot_state_request": {
+      "priority": 10,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "job_status_request": {
+      "priority": 10,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "ping": {
+      "priority": 10,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "resume_all": {
+      "priority": 20,
+      "command_type": "control",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "replace_same_job",
+      "allowed_operating_modes": ["PAUSED"],
+      "target_scope_allowed": ["all"]
+    },
+    "resume_robot": {
+      "priority": 20,
+      "command_type": "control",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "replace_same_job",
+      "allowed_operating_modes": ["PAUSED"],
+      "target_scope_allowed": ["single", "multi"]
+    },
+    "stop_mapping": {
+      "priority": 40,
+      "command_type": "control",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["MAPPING", "PAUSED"],
+      "target_scope_allowed": ["single"]
+    },
+    "nav_cancel": {
+      "priority": 6,
+      "command_type": "control",
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "allowed_operating_modes": ["NAVIGATION", "PAUSED"],
+      "target_scope_allowed": ["single", "multi"]
+    },
+    "move_forward": {
+      "priority": 30,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MANUAL", "MAPPING"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "lx": "linear.x speed, positive number, server may apply default",
+        "dur": "publish duration seconds",
+        "hz": "publish rate",
+        "stop": "publish zero Twist after duration"
+      }
+    },
+    "move_backward": {
+      "priority": 30,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MANUAL", "MAPPING"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "lx": "linear.x speed magnitude; server sends negative value",
+        "dur": "publish duration seconds",
+        "hz": "publish rate",
+        "stop": "publish zero Twist after duration"
+      }
+    },
+    "turn_left": {
+      "priority": 30,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MANUAL", "MAPPING"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "az": "angular.z speed magnitude; server sends positive value",
+        "dur": "publish duration seconds",
+        "hz": "publish rate",
+        "stop": "publish zero Twist after duration"
+      }
+    },
+    "turn_right": {
+      "priority": 30,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MANUAL", "MAPPING"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "az": "angular.z speed magnitude; server sends negative value",
+        "dur": "publish duration seconds",
+        "hz": "publish rate",
+        "stop": "publish zero Twist after duration"
+      }
+    },
+    "custom_move": {
+      "priority": 30,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MANUAL", "MAPPING"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "lx": "linear.x speed",
+        "az": "angular.z speed",
+        "dur": "publish duration seconds",
+        "hz": "publish rate",
+        "stop": "publish zero Twist after duration"
+      }
+    },
+    "start_mapping": {
+      "priority": 40,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MANUAL", "AUTO", "SERVICE"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "mode": "mapping",
+        "mapping_engine": "cartographer recommended, optional",
+        "auto_explore": "true starts autonomous exploration after SLAM starts",
+        "explore": "alias of auto_explore, optional",
+        "map_name": "optional map/session name",
+        "session_id": "optional mapping session id"
+      }
+    },
+    "mapping_status": {
+      "priority": 40,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "save_map": {
+      "priority": 50,
+      "command_type": "background",
+      "blocking_type": "SINGLE",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["MAPPING", "SERVICE"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "map_name": "name used when saving map files",
+        "session_id": "mapping session id to associate with saved files",
+        "format": "map file format, e.g. png/yaml or pgm/yaml"
+      }
+    },
+    "rsync_map": {
+      "priority": 55,
+      "command_type": "background",
+      "blocking_type": "SINGLE",
+      "interrupt_policy": "queue_if_busy",
+      "allowed_operating_modes": ["MAPPING", "SERVICE"],
+      "target_scope_allowed": ["single"],
+      "params_contract": {
+        "session_id": "map sync session id",
+        "map_name": "map file group name",
+        "preferred_files": "map_image/map_yaml/map_metadata list, optional"
+      }
+    },
+    "image_request": {
+      "priority": 56,
+      "command_type": "background",
+      "blocking_type": "SINGLE",
+      "interrupt_policy": "queue_if_busy",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single"]
+    },
+    "image_view_closed": {
+      "priority": 57,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "file_cleanup_report": {
+      "priority": 58,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "map_status": {
+      "priority": 60,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    },
+    "map_list": {
+      "priority": 60,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"],
+      "params_contract": {
+        "robot": "optional robot alias filter (e.g. tb1); omit to list all robots"
+      }
+    },
+    "map_image_select": {
+      "priority": 61,
+      "command_type": "background",
+      "blocking_type": "SINGLE",
+      "interrupt_policy": "queue_if_busy",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "all"],
+      "params_contract": {
+        "index": "1-based index from map_list response",
+        "dir_name": "exact directory name (e.g. 20260624_164951_tb1_autoSave_1); alternative to index"
+      }
+    },
+    "nav_goal": {
+      "priority": 70,
+      "command_type": "normal",
+      "blocking_type": "SOFT",
+      "interrupt_policy": "reject_if_busy",
+      "allowed_operating_modes": ["AUTO", "MANUAL"],
+      "target_scope_allowed": ["single"]
+    },
+    "nav_status": {
+      "priority": 70,
+      "command_type": "immediate",
+      "blocking_type": "NONE",
+      "interrupt_policy": "status_only",
+      "allowed_operating_modes": ["ANY"],
+      "target_scope_allowed": ["single", "multi", "all"]
+    }
+  }
+}

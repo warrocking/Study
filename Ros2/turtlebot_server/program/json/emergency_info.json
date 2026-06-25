@@ -1,0 +1,57 @@
+{
+  "version": "0.5.1",
+  "schema": "emergency_info_v0.5.1",
+  "emergency_policy": {
+    "enabled": true,
+    "auto_resume": false,
+    "global_state_on_emergency": "EMERGENCY",
+    "emergency_stop": {
+      "priority": 0,
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "force_all_stop": true,
+      "log_level": "CRITICAL"
+    },
+    "all_stop": {
+      "priority": 1,
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current",
+      "fanout_to_robot_stop": true
+    },
+    "robot_stop": {
+      "priority": 2,
+      "blocking_type": "HARD",
+      "interrupt_policy": "interrupt_current"
+    },
+    "allowed_during_emergency": [
+      "status_request",
+      "robot_state_request",
+      "job_status_request",
+      "clear_emergency",
+      "reset_all_jobs",
+      "emergency_stop",
+      "all_stop"
+    ],
+    "blocked_during_emergency": [
+      "move_forward",
+      "move_backward",
+      "turn_left",
+      "turn_right",
+      "custom_move",
+      "start_mapping",
+      "save_map",
+      "nav_goal",
+      "image_request"
+    ],
+    "clear_emergency_requires": {
+      "all_robot_stopped": true,
+      "operator_confirm": true,
+      "opencv_safety_clear": true
+    },
+    "reset_all_jobs": {
+      "clears_queues": true,
+      "clears_current_jobs": true,
+      "does_not_clear_emergency": true
+    }
+  }
+}

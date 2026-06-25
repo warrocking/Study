@@ -1,0 +1,56 @@
+{
+  "version": "0.6",
+  "schema": "client_info_v0.6",
+  "robot_command_client": {
+    "id": "robot_command_client",
+    "name": "Robot Command Gateway Client",
+    "enabled": true,
+    "ip": "192.168.3.63",
+    "port": 5000,
+    "health_port": 5000,
+    "command_port": 5001,
+    "data_control_port": 5002,
+    "protocol": "tcp_utf8_ndjson",
+    "health_message_type_in": "client_heartbeat_request",
+    "health_message_type_out": "client_heartbeat_response",
+    "command_message_type_in": "server_command",
+    "command_message_type_out": "agent_result",
+    "data_control_message_type_in": "client_data_prepare_request",
+    "data_control_message_type_out": "client_data_prepare_response",
+    "ssh": {
+      "enabled": true,
+      "ip": "192.168.3.63",
+      "user": "ubuntu22",
+      "port": 22,
+      "connect_timeout": 5,
+      "identity_file": "/home/admin_kyj/.ssh/fleet_server_map_pull_ed25519",
+      "map_source_dir": "/home/ubuntu22/ros2_ws/maps",
+      "map_server_dir": "/home/admin_kyj/turtlebot_server/data/map/incoming"
+    },
+    "paths": {
+      "client_base_dir": "/home/ubuntu22/ros2_ws",
+      "client_log_dir": "/home/ubuntu22/ros2_ws/logs",
+      "client_image_dir": "/home/ubuntu22/ros2_ws/images",
+      "client_receive_dir": "/home/ubuntu22/ros2_ws/from_server",
+      "client_send_dir": "/home/ubuntu22/ros2_ws/to_server",
+      "client_map_save_dir": "/home/ubuntu22/ros2_ws/maps"
+    }
+  },
+  "robots": {
+    "tb1": {
+      "name": "tb1",
+      "display_name": "tb1",
+      "alias": "tb1",
+      "aliases": [
+        "tb1",
+        "14"
+      ],
+      "robot_id": "14",
+      "namespace": "/tb1",
+      "topic": "/tb1/cmd_vel",
+      "cmd_vel_topic": "/tb1/cmd_vel",
+      "ros_domain_id": 14,
+      "enabled": true
+    }
+  }
+}

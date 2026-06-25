@@ -1,0 +1,86 @@
+{
+  "version": "0.6",
+  "schema": "server_config_v0.6",
+  "server": {
+    "name": "turtlebot_fleet_server_v05",
+    "bind_ip": "0.0.0.0",
+    "public_ip": "192.168.3.61",
+    "control_port": 4000,
+    "control_health_port": 4000,
+    "control_command_port": 4001,
+    "control_data_port": 4002,
+    "client_event_port": 4003,
+    "socket_timeout": 6.0,
+    "allowed_control_ips": []
+  },
+  "auth": {
+    "require_auth": false,
+    "auth_token": "team_demo_token"
+  },
+  "defaults": {
+    "lx": 0.05,
+    "az": 0.0,
+    "turn_az": 0.5,
+    "dur": 2.0,
+    "hz": 10,
+    "stop": true,
+    "timeout": 5.0
+  },
+  "limits": {
+    "lx_abs_max": 0.1,
+    "az_abs_max": 1.0,
+    "dur_max": 5.0,
+    "hz_max": 50,
+    "timeout_max": 10.0
+  },
+  "safety": {
+    "allow_multi_robot_move": false,
+    "allow_stop_on_pause": true,
+    "allow_all_stop_always": true,
+    "opencv_event_file": "/home/admin_kyj/turtlebot_server/data/opencv/latest/latest_opencv_event.json",
+    "block_move_on_pause": true,
+    "block_move_on_emergency": true
+  },
+  "files": {
+    "client_info_file": "/home/admin_kyj/turtlebot_server/program/json/client_info.json",
+    "control_info_file": "/home/admin_kyj/turtlebot_server/program/json/control_info.json",
+    "action_policy_file": "/home/admin_kyj/turtlebot_server/program/json/action_policy.json",
+    "emergency_info_file": "/home/admin_kyj/turtlebot_server/program/json/emergency_info.json"
+  },
+  "file_transfer": {
+    "enabled": true,
+    "rsync_bin": "rsync",
+    "rsync_timeout": 30.0,
+    "server_image_dir": "/home/admin_kyj/turtlebot_server/data/images/latest",
+    "allowed_source_dirs": [
+      "/home/admin_kyj/turtlebot_server/data/images/latest",
+      "/home/admin_kyj/turtlebot_server/data/transfer/to_control",
+      "/home/admin_kyj/turtlebot_server/data/transfer/from_client",
+      "/home/admin_kyj/turtlebot_server/data/map/incoming",
+      "/home/admin_kyj/turtlebot_server/data/maps"
+    ]
+  },
+  "logs": {
+    "base_dir": "/home/admin_kyj/turtlebot_server/data/log/server/latest",
+    "print_paths": true
+  },
+  "paths": {
+    "project_root": "/home/admin_kyj/turtlebot_server",
+    "program_dir": "/home/admin_kyj/turtlebot_server/program",
+    "code_dir": "/home/admin_kyj/turtlebot_server/program/code",
+    "json_dir": "/home/admin_kyj/turtlebot_server/program/json",
+    "data_dir": "/home/admin_kyj/turtlebot_server/data",
+    "server_log_dir": "/home/admin_kyj/turtlebot_server/data/log/server",
+    "control_log_dir": "/home/admin_kyj/turtlebot_server/data/log/control",
+    "client_log_dir": "/home/admin_kyj/turtlebot_server/data/log/client",
+    "transfer_log_dir": "/home/admin_kyj/turtlebot_server/data/log/transfer",
+    "emergency_log_dir": "/home/admin_kyj/turtlebot_server/data/log/emergency",
+    "system_log_dir": "/home/admin_kyj/turtlebot_server/data/log/system",
+    "server_image_dir": "/home/admin_kyj/turtlebot_server/data/images/latest",
+    "server_image_archive_dir": "/home/admin_kyj/turtlebot_server/data/images/archive",
+    "server_transfer_to_control_dir": "/home/admin_kyj/turtlebot_server/data/transfer/to_control",
+    "server_transfer_from_client_dir": "/home/admin_kyj/turtlebot_server/data/transfer/from_client",
+    "server_transfer_to_client_dir": "/home/admin_kyj/turtlebot_server/data/transfer/to_client",
+    "server_map_backup_dir": "/home/admin_kyj/turtlebot_server/data/maps"
+  }
+}

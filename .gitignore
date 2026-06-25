@@ -23,3 +23,9 @@
 **/*.tlog
 **/*.recipe
 **/*.lastbuildstate
+
+# TurtleBot / ROS2 runtime artifacts
+Ros2/turtlebot_server/data/log/
+Ros2/turtlebot_server/backup/
+Ros2/turtlebot_server/**/__pycache__/
+Ros2/turtlebot_server/**/*.pyc
