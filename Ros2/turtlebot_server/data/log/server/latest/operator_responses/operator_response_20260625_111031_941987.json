@@ -1,0 +1,117 @@
+{
+  "v": 6,
+  "mt": "operator_response",
+  "msg_id": "MSG_20260625_OPERATOR_RESPONSE_000024",
+  "ts": "2026-06-25T11:10:31+09:00",
+  "source": "fleet_server",
+  "dest": "control_ui",
+  "schema": "fleet_json_v0.6",
+  "ref": "MSG_20260625_111031_4413_318733BA",
+  "ok": true,
+  "code": "R_STATUS",
+  "message": "3 maps found (robot=tb1)",
+  "command": {
+    "command_id": "CMD_20260625_111031_4413_318733BA",
+    "group_id": "GRP_20260625_111031_4413_318733BA",
+    "job_id": null,
+    "action": "map_list",
+    "normalized_action": "map_list",
+    "server_priority": 60,
+    "blocking_type": "NONE",
+    "interrupt_policy": "status_only",
+    "resolved_targets": [
+      "tb1"
+    ]
+  },
+  "system": {
+    "global_state": "NORMAL"
+  },
+  "results": {
+    "tb1": {
+      "ok": true,
+      "code": "R_STATUS",
+      "connection_state": "CONNECTED",
+      "operating_mode": "MANUAL",
+      "robot_state": "STOPPED",
+      "job_state": "DONE",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "READY",
+      "message": "tb1 status",
+      "enabled": true,
+      "command_client_id": "robot_command_client",
+      "command_client_ip": "192.168.3.63",
+      "command_client_port": 5001,
+      "health_client_port": 5000,
+      "data_control_client_port": 5002,
+      "last_result": "R_STOPPED",
+      "last_seen": "2026-06-25T11:10:31+09:00"
+    }
+  },
+  "err": [],
+  "ui_hint": {
+    "summary": "3 maps found (robot=tb1)",
+    "severity": "info",
+    "highlight_robots": [
+      "tb1"
+    ],
+    "disable_buttons": [],
+    "enable_buttons": [
+      "status_request"
+    ]
+  },
+  "trace": {
+    "request_msg_id": "MSG_20260625_111031_4413_318733BA",
+    "command_id": "CMD_20260625_111031_4413_318733BA",
+    "server_log_categories": [
+      "operator_requests",
+      "operator_responses"
+    ]
+  },
+  "status": {
+    "maps": [
+      {
+        "date": "2026-06-24",
+        "time": "20:23:31",
+        "robot": "tb1",
+        "save_method": "stop",
+        "save_number": 1,
+        "dir_name": "20260624_202331_tb1_stop_1",
+        "files": [
+          "map.pgm",
+          "map.yaml"
+        ],
+        "index": 1,
+        "display": "2026-06-24 20:23:31 | tb1 | stop | #1"
+      },
+      {
+        "date": "2026-06-24",
+        "time": "20:30:30",
+        "robot": "tb1",
+        "save_method": "stop",
+        "save_number": 2,
+        "dir_name": "20260624_203030_tb1_stop_2",
+        "files": [
+          "map.pgm",
+          "map.yaml"
+        ],
+        "index": 2,
+        "display": "2026-06-24 20:30:30 | tb1 | stop | #2"
+      },
+      {
+        "date": "2026-06-25",
+        "time": "10:41:43",
+        "robot": "tb1",
+        "save_method": "stop",
+        "save_number": 4,
+        "dir_name": "20260625_104143_tb1_stop_4",
+        "files": [
+          "map.pgm",
+          "map.yaml"
+        ],
+        "index": 3,
+        "display": "2026-06-25 10:41:43 | tb1 | stop | #4"
+      }
+    ],
+    "map_total": 3
+  }
+}

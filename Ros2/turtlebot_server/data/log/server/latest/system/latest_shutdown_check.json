@@ -1,0 +1,8 @@
+{
+  "v": 6,
+  "mt": "server_shutdown_check",
+  "schema": "fleet_json_v0.6",
+  "ts": "2026-06-25T11:12:10+09:00",
+  "reason": "user_interrupt",
+  "uptime_sec": 7436.471
+}

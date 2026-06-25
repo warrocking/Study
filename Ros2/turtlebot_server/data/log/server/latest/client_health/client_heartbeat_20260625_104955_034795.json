@@ -1,0 +1,113 @@
+{
+  "v": 6,
+  "mt": "client_heartbeat",
+  "ts": "2026-06-25T10:49:54+09:00",
+  "request": {
+    "v": 6,
+    "mt": "client_heartbeat_request",
+    "msg_id": "MSG_20260625_CLIENT_HEARTBEAT_REQUEST_003013",
+    "ts": "2026-06-25T10:49:54+09:00",
+    "source": "fleet_server",
+    "dest": "robot_command_client",
+    "schema": "fleet_json_v0.6",
+    "request": {
+      "include_robot_states": true,
+      "robots": [
+        "14"
+      ]
+    }
+  },
+  "client_id": "robot_command_client",
+  "ip": "192.168.3.63",
+  "port": 5000,
+  "timeout_sec": 2.0,
+  "ok": true,
+  "connection_state": "CONNECTED",
+  "code": "R_CLIENT_ALIVE",
+  "message": "robot_command_client alive",
+  "response": {
+    "v": 6,
+    "mt": "client_heartbeat_response",
+    "msg_id": "MSG_20260625_104954_856721_CLIENT_HEARTBEAT_RESPONSE_14",
+    "ref": "MSG_20260625_CLIENT_HEARTBEAT_REQUEST_003013",
+    "ts": "2026-06-25T10:49:54+09:00",
+    "source": "robot_command_client",
+    "dest": "fleet_server",
+    "schema": "fleet_json_v0.6",
+    "ok": true,
+    "code": "R_CLIENT_ALIVE",
+    "message": "robot_command_client alive",
+    "client": {
+      "robot_id": "14",
+      "robot_alias": "tb1",
+      "connection_state": "CONNECTED",
+      "uptime_sec": 520
+    },
+    "robots": {
+      "14": {
+        "connection_state": "CONNECTED",
+        "operating_mode": "MAPPING",
+        "robot_state": "MAPPING",
+        "job_state": "RUNNING",
+        "accept_state": "ACCEPTING",
+        "ui_mode": "BUSY_QUEUEABLE",
+        "mapping": {
+          "coverage_percent": 42.95,
+          "known_cells": 11583,
+          "total_cells": 26970,
+          "stable_sec": 96.47,
+          "travel_m": 20.191,
+          "done_suggested": false,
+          "map_start_ts": "2026-06-25T10:41:43+09:00",
+          "map_start_stamp": "20260625_104143",
+          "autosave_in_progress": false,
+          "autosaved": false,
+          "autosave_sync_required": false,
+          "autosave_dir": null,
+          "autosave_prefix": null,
+          "autosave_error": null,
+          "needs_final_save": false,
+          "auto_stop_on_map_done": false,
+          "status_file": "/home/ubuntu22/ros2_ws/maps/mapping_status_tb1.json"
+        }
+      }
+    },
+    "err": []
+  },
+  "client": {
+    "robot_id": "14",
+    "robot_alias": "tb1",
+    "connection_state": "CONNECTED",
+    "uptime_sec": 520
+  },
+  "robots": {
+    "14": {
+      "connection_state": "CONNECTED",
+      "operating_mode": "MAPPING",
+      "robot_state": "MAPPING",
+      "job_state": "RUNNING",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "BUSY_QUEUEABLE",
+      "mapping": {
+        "coverage_percent": 42.95,
+        "known_cells": 11583,
+        "total_cells": 26970,
+        "stable_sec": 96.47,
+        "travel_m": 20.191,
+        "done_suggested": false,
+        "map_start_ts": "2026-06-25T10:41:43+09:00",
+        "map_start_stamp": "20260625_104143",
+        "autosave_in_progress": false,
+        "autosaved": false,
+        "autosave_sync_required": false,
+        "autosave_dir": null,
+        "autosave_prefix": null,
+        "autosave_error": null,
+        "needs_final_save": false,
+        "auto_stop_on_map_done": false,
+        "status_file": "/home/ubuntu22/ros2_ws/maps/mapping_status_tb1.json"
+      }
+    }
+  },
+  "elapsed_ms": 142
+}

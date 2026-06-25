@@ -1,0 +1,67 @@
+{
+  "v": 6,
+  "mt": "operator_response",
+  "msg_id": "MSG_20260625_OPERATOR_RESPONSE_000016",
+  "ts": "2026-06-25T10:41:43+09:00",
+  "source": "fleet_server",
+  "dest": "control_ui",
+  "schema": "fleet_json_v0.6",
+  "ref": "MSG_20260625_104143_3549_3F4BA93F",
+  "ok": true,
+  "code": "R_STARTED",
+  "message": "start_mapping command completed",
+  "command": {
+    "command_id": "CMD_20260625_104143_3549_3F4BA93F",
+    "group_id": null,
+    "job_id": "JOB_20260625_104143_TB1_START_MAPPING_3549",
+    "action": "start_mapping",
+    "normalized_action": "start_mapping",
+    "server_priority": 40,
+    "blocking_type": "SOFT",
+    "interrupt_policy": "reject_if_busy",
+    "resolved_targets": [
+      "tb1"
+    ]
+  },
+  "system": {
+    "global_state": "NORMAL"
+  },
+  "results": {
+    "tb1": {
+      "ok": true,
+      "code": "R_STARTED",
+      "connection_state": "CONNECTED",
+      "operating_mode": "MAPPING",
+      "robot_state": "MAPPING",
+      "job_state": "RUNNING",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "BUSY_QUEUEABLE",
+      "message": "mapping and exploration started",
+      "agent_result_msg_id": "MSG_20260625_104143_547007_AGENT_RESULT_14",
+      "command_id": "CMD_20260625_104143_3549_3F4BA93F"
+    }
+  },
+  "err": [],
+  "ui_hint": {
+    "summary": "start_mapping command completed",
+    "severity": "info",
+    "highlight_robots": [
+      "tb1"
+    ],
+    "disable_buttons": [],
+    "enable_buttons": [
+      "status_request"
+    ]
+  },
+  "trace": {
+    "request_msg_id": "MSG_20260625_104143_3549_3F4BA93F",
+    "command_id": "CMD_20260625_104143_3549_3F4BA93F",
+    "job_id": "JOB_20260625_104143_TB1_START_MAPPING_3549",
+    "server_log_categories": [
+      "operator_requests",
+      "commands",
+      "results",
+      "operator_responses"
+    ]
+  }
+}

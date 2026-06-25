@@ -1,0 +1,15 @@
+{
+  "v": 6,
+  "mt": "control_health_request",
+  "msg_id": "MSG_20260625_104118_3536_5A8C884F",
+  "ref": null,
+  "ts": "2026-06-25T10:41:18+09:00",
+  "source": "control_ui",
+  "dest": "fleet_server",
+  "schema": "fleet_json_v0.6",
+  "request": {
+    "include_server_time": true,
+    "include_client_state": true,
+    "include_robot_states": true
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "v": 6,
+  "mt": "client_heartbeat",
+  "ts": "2026-06-25T10:41:15+09:00",
+  "request": {
+    "v": 6,
+    "mt": "client_heartbeat_request",
+    "msg_id": "MSG_20260625_CLIENT_HEARTBEAT_REQUEST_002756",
+    "ts": "2026-06-25T10:41:15+09:00",
+    "source": "fleet_server",
+    "dest": "robot_command_client",
+    "schema": "fleet_json_v0.6",
+    "request": {
+      "include_robot_states": true,
+      "robots": [
+        "14"
+      ]
+    }
+  },
+  "client_id": "robot_command_client",
+  "ip": "192.168.3.63",
+  "port": 5000,
+  "timeout_sec": 2.0,
+  "ok": true,
+  "connection_state": "CONNECTED",
+  "code": "R_CLIENT_ALIVE",
+  "message": "robot_command_client alive",
+  "response": {
+    "v": 6,
+    "mt": "client_heartbeat_response",
+    "msg_id": "MSG_20260625_104114_933442_CLIENT_HEARTBEAT_RESPONSE_14",
+    "ref": "MSG_20260625_CLIENT_HEARTBEAT_REQUEST_002756",
+    "ts": "2026-06-25T10:41:14+09:00",
+    "source": "robot_command_client",
+    "dest": "fleet_server",
+    "schema": "fleet_json_v0.6",
+    "ok": true,
+    "code": "R_CLIENT_ALIVE",
+    "message": "robot_command_client alive",
+    "client": {
+      "robot_id": "14",
+      "robot_alias": "tb1",
+      "connection_state": "CONNECTED",
+      "uptime_sec": 0
+    },
+    "robots": {
+      "14": {
+        "connection_state": "CONNECTED",
+        "operating_mode": "MANUAL",
+        "robot_state": "IDLE",
+        "job_state": "NONE",
+        "accept_state": "ACCEPTING",
+        "ui_mode": "READY"
+      }
+    },
+    "err": []
+  },
+  "client": {
+    "robot_id": "14",
+    "robot_alias": "tb1",
+    "connection_state": "CONNECTED",
+    "uptime_sec": 0
+  },
+  "robots": {
+    "14": {
+      "connection_state": "CONNECTED",
+      "operating_mode": "MANUAL",
+      "robot_state": "IDLE",
+      "job_state": "NONE",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "READY"
+    }
+  },
+  "elapsed_ms": 17
+}

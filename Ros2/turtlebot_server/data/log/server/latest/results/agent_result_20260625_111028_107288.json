@@ -1,0 +1,56 @@
+{
+  "v": 6,
+  "mt": "agent_result",
+  "msg_id": "MSG_20260625_111028_112331_AGENT_RESULT_14",
+  "ref": "MSG_20260625_SERVER_COMMAND_TB1_000006",
+  "ts": "2026-06-25T11:10:28+09:00",
+  "source": "robot_command_client",
+  "dest": "fleet_server",
+  "schema": "fleet_json_v0.6",
+  "robot_id": "14",
+  "command": {
+    "command_id": "CMD_20260625_111027_4410_4C1C076B",
+    "parent_command_id": null,
+    "group_id": null,
+    "job_id": "JOB_20260625_ROBOT_STOP_TB1_000002",
+    "op": "robot_stop"
+  },
+  "ok": true,
+  "code": "R_STOPPED",
+  "message": "robot_stop published zero Twist",
+  "state": {
+    "connection_state": "CONNECTED",
+    "operating_mode": "MANUAL",
+    "robot_state": "STOPPED",
+    "job_state": "DONE",
+    "accept_state": "ACCEPTING",
+    "ui_mode": "READY",
+    "mapping": {
+      "coverage_percent": 32.55,
+      "known_cells": 16963,
+      "total_cells": 52118,
+      "stable_sec": 118.0,
+      "travel_m": 67.462,
+      "done_suggested": false,
+      "map_start_ts": "2026-06-25T10:41:43+09:00",
+      "map_start_stamp": "20260625_104143",
+      "autosave_in_progress": false,
+      "autosaved": false,
+      "autosave_sync_required": false,
+      "autosave_dir": null,
+      "autosave_prefix": null,
+      "autosave_error": null,
+      "needs_final_save": false,
+      "auto_stop_on_map_done": false,
+      "status_file": "/home/ubuntu22/ros2_ws/maps/mapping_status_tb1.json"
+    }
+  },
+  "perf": {
+    "elapsed_ms": 363,
+    "dur": 1.0,
+    "hz": 10,
+    "pub": 3,
+    "sent_cmd_vel_zero": true
+  },
+  "err": []
+}

@@ -1,0 +1,31 @@
+{
+  "v": 6,
+  "mt": "server_command",
+  "msg_id": "MSG_20260625_SERVER_COMMAND_TB1_000005",
+  "ts": "2026-06-25T11:10:26+09:00",
+  "source": "fleet_server",
+  "dest": "robot_command_client",
+  "schema": "fleet_json_v0.6",
+  "command": {
+    "command_id": "CMD_20260625_111026_4408_87FAB876",
+    "parent_command_id": null,
+    "group_id": null,
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000002",
+    "command_seq": null,
+    "command_revision": 0,
+    "op": "stop_mapping",
+    "server_priority": 40,
+    "blocking_type": "HARD",
+    "interrupt_policy": "interrupt_current",
+    "robot_id": "14",
+    "ros": {
+      "domain_id": 14,
+      "namespace": "/tb1",
+      "topic": "/tb1/cmd_vel"
+    },
+    "params": {
+      "save": true
+    },
+    "timeout_sec": 5.0
+  }
+}

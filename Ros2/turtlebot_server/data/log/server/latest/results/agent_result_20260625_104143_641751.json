@@ -1,0 +1,49 @@
+{
+  "v": 6,
+  "mt": "agent_result",
+  "msg_id": "MSG_20260625_104143_547007_AGENT_RESULT_14",
+  "ref": "MSG_20260625_SERVER_COMMAND_TB1_000004",
+  "ts": "2026-06-25T10:41:43+09:00",
+  "source": "robot_command_client",
+  "dest": "fleet_server",
+  "schema": "fleet_json_v0.6",
+  "robot_id": "14",
+  "command": {
+    "command_id": "CMD_20260625_104143_3549_3F4BA93F",
+    "parent_command_id": null,
+    "group_id": null,
+    "job_id": "JOB_20260625_104143_TB1_START_MAPPING_3549",
+    "op": "start_mapping"
+  },
+  "ok": true,
+  "code": "R_STARTED",
+  "message": "mapping and exploration started",
+  "state": {
+    "connection_state": "CONNECTED",
+    "operating_mode": "MAPPING",
+    "robot_state": "MAPPING",
+    "job_state": "RUNNING",
+    "accept_state": "ACCEPTING",
+    "ui_mode": "BUSY_QUEUEABLE",
+    "mapping": {
+      "coverage_percent": 0.0,
+      "done_suggested": false,
+      "map_start_ts": "2026-06-25T10:41:43+09:00",
+      "map_start_stamp": "20260625_104143",
+      "autosaved": false,
+      "autosave_sync_required": false,
+      "needs_final_save": false,
+      "stop_saved": false,
+      "stop_sync_required": false,
+      "status_file": "/home/ubuntu22/ros2_ws/maps/mapping_status_tb1.json"
+    }
+  },
+  "perf": {
+    "elapsed_ms": 7,
+    "dur": 0.0,
+    "hz": 0,
+    "pub": 0,
+    "sent_cmd_vel_zero": false
+  },
+  "err": []
+}

@@ -1,0 +1,38 @@
+{
+  "v": 6,
+  "mt": "control_command_request",
+  "msg_id": "MSG_20260625_111031_4413_318733BA",
+  "ref": null,
+  "ts": "2026-06-25T11:10:31+09:00",
+  "source": "control_ui",
+  "dest": "fleet_server",
+  "schema": "fleet_json_v0.6",
+  "auth": {
+    "token": "team_demo_token"
+  },
+  "user": "operator_1",
+  "command": {
+    "command_id": "CMD_20260625_111031_4413_318733BA",
+    "group_id": "GRP_20260625_111031_4413_318733BA",
+    "job_id": null,
+    "command_seq": null,
+    "command_revision": 0,
+    "action": "map_list",
+    "target_scope": "all",
+    "targets": [
+      "all"
+    ],
+    "params": {
+      "robot": "tb1"
+    },
+    "expects": {
+      "response_type": "sync",
+      "status_followup": true
+    },
+    "timeout_sec": 10.0
+  },
+  "ui_context": {
+    "screen": "main_control",
+    "button": "map_list"
+  }
+}

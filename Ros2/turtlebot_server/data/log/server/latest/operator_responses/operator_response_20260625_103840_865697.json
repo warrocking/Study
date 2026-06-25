@@ -1,0 +1,151 @@
+{
+  "v": 6,
+  "mt": "operator_response",
+  "msg_id": "MSG_20260625_OPERATOR_RESPONSE_000007",
+  "ts": "2026-06-25T10:38:40+09:00",
+  "source": "fleet_server",
+  "dest": "control_ui",
+  "schema": "fleet_json_v0.6",
+  "ref": "MSG_20260625_103836_3447_C63EAC08",
+  "ok": false,
+  "code": "E_BAD_REQUEST",
+  "message": "stop_mapping failed for: tb1",
+  "command": {
+    "command_id": "CMD_20260625_103836_3447_C63EAC08",
+    "group_id": null,
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000001",
+    "action": "stop_mapping",
+    "normalized_action": "stop_mapping",
+    "server_priority": 40,
+    "blocking_type": "HARD",
+    "interrupt_policy": "interrupt_current",
+    "resolved_targets": [
+      "tb1"
+    ]
+  },
+  "system": {
+    "global_state": "NORMAL"
+  },
+  "results": {
+    "tb1": {
+      "ok": false,
+      "code": "E_BAD_REQUEST",
+      "connection_state": "CONNECTED",
+      "operating_mode": "MANUAL",
+      "robot_state": "ERROR",
+      "job_state": "FAILED",
+      "accept_state": "BLOCKED",
+      "ui_mode": "READY",
+      "message": "unknown result code: E_MAP_SAVE_FAILED",
+      "agent_result_msg_id": "MSG_20260625_AGENT_RESULT_TB1_000004",
+      "command_id": "CMD_20260625_103836_3447_C63EAC08",
+      "err": [
+        {
+          "code": "E_BAD_REQUEST",
+          "msg": "unknown result code: E_MAP_SAVE_FAILED",
+          "where": "fleet_server",
+          "detail": {
+            "received": {
+              "v": 4,
+              "mt": "agent_result",
+              "msg_id": "MSG_20260625_103840_771356_AGENT_RESULT_14",
+              "ref": "MSG_20260625_SERVER_COMMAND_TB1_000002",
+              "ts": "2026-06-25T10:38:40+09:00",
+              "source": "robot_command_client",
+              "dest": "fleet_server",
+              "schema": "fleet_json_v0.4",
+              "robot_id": "14",
+              "command": {
+                "command_id": "CMD_20260625_103836_3447_C63EAC08",
+                "parent_command_id": null,
+                "group_id": null,
+                "job_id": "JOB_20260625_STOP_MAPPING_TB1_000001",
+                "op": "stop_mapping"
+              },
+              "ok": false,
+              "code": "E_MAP_SAVE_FAILED",
+              "message": "mapping stopped, but final map save failed",
+              "state": {
+                "connection_state": "CONNECTED",
+                "operating_mode": "MANUAL",
+                "robot_state": "STOPPED",
+                "job_state": "FAILED",
+                "accept_state": "ACCEPTING",
+                "ui_mode": "READY",
+                "mapping": {
+                  "coverage_percent": 32.07,
+                  "known_cells": 18701,
+                  "total_cells": 58308,
+                  "stable_sec": 5.03,
+                  "travel_m": 218.992,
+                  "done_suggested": false,
+                  "map_start_ts": "2026-06-25T09:10:03+09:00",
+                  "map_start_stamp": "20260625_091003",
+                  "autosave_in_progress": false,
+                  "autosaved": false,
+                  "autosave_sync_required": false,
+                  "autosave_dir": null,
+                  "autosave_prefix": null,
+                  "autosave_error": null,
+                  "needs_final_save": false,
+                  "auto_stop_on_map_done": false,
+                  "status_file": "/home/ubuntu22/ros2_ws/maps/mapping_status_tb1.json"
+                }
+              },
+              "perf": {
+                "elapsed_ms": 3927,
+                "dur": 0.0,
+                "hz": 10,
+                "pub": 3,
+                "sent_cmd_vel_zero": true
+              },
+              "err": [
+                {
+                  "code": "E_MAP_SAVE_FAILED",
+                  "message": "mapping stopped, but final map save failed"
+                }
+              ]
+            },
+            "validator_code": "E_BAD_REQUEST"
+          }
+        }
+      ]
+    }
+  },
+  "err": [
+    {
+      "code": "E_BAD_REQUEST",
+      "msg": "tb1: unknown result code: E_MAP_SAVE_FAILED",
+      "where": "fleet_server",
+      "detail": {
+        "robot_id": "tb1",
+        "agent_result_msg_id": "MSG_20260625_AGENT_RESULT_TB1_000004"
+      }
+    }
+  ],
+  "ui_hint": {
+    "summary": "stop_mapping failed for: tb1",
+    "severity": "error",
+    "highlight_robots": [
+      "tb1"
+    ],
+    "disable_buttons": [
+      "start_mapping",
+      "nav_goal"
+    ],
+    "enable_buttons": [
+      "status_request"
+    ]
+  },
+  "trace": {
+    "request_msg_id": "MSG_20260625_103836_3447_C63EAC08",
+    "command_id": "CMD_20260625_103836_3447_C63EAC08",
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000001",
+    "server_log_categories": [
+      "operator_requests",
+      "commands",
+      "results",
+      "operator_responses"
+    ]
+  }
+}

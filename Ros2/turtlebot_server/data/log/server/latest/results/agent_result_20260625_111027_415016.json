@@ -1,0 +1,76 @@
+{
+  "v": 6,
+  "mt": "agent_result",
+  "msg_id": "MSG_20260625_111027_415939_AGENT_RESULT_14",
+  "ref": "MSG_20260625_SERVER_COMMAND_TB1_000005",
+  "ts": "2026-06-25T11:10:27+09:00",
+  "source": "robot_command_client",
+  "dest": "fleet_server",
+  "schema": "fleet_json_v0.6",
+  "robot_id": "14",
+  "command": {
+    "command_id": "CMD_20260625_111026_4408_87FAB876",
+    "parent_command_id": null,
+    "group_id": null,
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000002",
+    "op": "stop_mapping"
+  },
+  "ok": true,
+  "code": "R_DONE",
+  "message": "mapping stopped",
+  "state": {
+    "connection_state": "CONNECTED",
+    "operating_mode": "MANUAL",
+    "robot_state": "STOPPED",
+    "job_state": "DONE",
+    "accept_state": "ACCEPTING",
+    "ui_mode": "READY",
+    "mapping": {
+      "coverage_percent": 32.55,
+      "known_cells": 16963,
+      "total_cells": 52118,
+      "stable_sec": 118.0,
+      "travel_m": 67.462,
+      "done_suggested": false,
+      "map_start_ts": "2026-06-25T10:41:43+09:00",
+      "map_start_stamp": "20260625_104143",
+      "autosave_in_progress": false,
+      "autosaved": false,
+      "autosave_sync_required": false,
+      "autosave_dir": null,
+      "autosave_prefix": null,
+      "autosave_error": null,
+      "needs_final_save": false,
+      "auto_stop_on_map_done": false,
+      "status_file": "/home/ubuntu22/ros2_ws/maps/mapping_status_tb1.json"
+    }
+  },
+  "perf": {
+    "elapsed_ms": 875,
+    "dur": 0.0,
+    "hz": 10,
+    "pub": 3,
+    "sent_cmd_vel_zero": true
+  },
+  "err": [],
+  "map": {
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000002",
+    "command_id": "CMD_20260625_111026_4408_87FAB876",
+    "map_id": "20260625_104143_tb1_stop_4",
+    "map_dir_name": "20260625_104143_tb1_stop_4",
+    "map_save_type": "stop",
+    "save_seq": 4,
+    "is_final": true,
+    "map_start_ts": "2026-06-25T10:41:43+09:00",
+    "map_start_stamp": "20260625_104143",
+    "map_dir": "/home/ubuntu22/ros2_ws/maps/20260625_104143_tb1_stop_4",
+    "map_prefix": "/home/ubuntu22/ros2_ws/maps/20260625_104143_tb1_stop_4/map",
+    "source_path_key": "/home/ubuntu22/ros2_ws/maps/20260625_104143_tb1_stop_4",
+    "files": [
+      "/home/ubuntu22/ros2_ws/maps/20260625_104143_tb1_stop_4/map.yaml",
+      "/home/ubuntu22/ros2_ws/maps/20260625_104143_tb1_stop_4/map.pgm"
+    ],
+    "sync_required": true,
+    "data_type": "map"
+  }
+}

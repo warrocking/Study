@@ -1,0 +1,71 @@
+{
+  "v": 4,
+  "mt": "operator_response",
+  "msg_id": "MSG_20260625_OPERATOR_RESPONSE_000022",
+  "ts": "2026-06-25T11:10:28+09:00",
+  "source": "fleet_server",
+  "dest": "control_ui",
+  "schema": "fleet_json_v0.4",
+  "ref": "MSG_20260625_111027_4410_4C1C076B",
+  "ok": true,
+  "code": "R_STOPPED",
+  "message": "robot_stop command completed",
+  "command": {
+    "command_id": "CMD_20260625_111027_4410_4C1C076B",
+    "group_id": null,
+    "job_id": "JOB_20260625_ROBOT_STOP_TB1_000002",
+    "action": "robot_stop",
+    "normalized_action": "robot_stop",
+    "server_priority": 3,
+    "blocking_type": "HARD",
+    "interrupt_policy": "interrupt_current",
+    "resolved_targets": [
+      "tb1"
+    ]
+  },
+  "system": {
+    "global_state": "NORMAL"
+  },
+  "results": {
+    "tb1": {
+      "ok": true,
+      "code": "R_STOPPED",
+      "connection_state": "CONNECTED",
+      "operating_mode": "MANUAL",
+      "robot_state": "STOPPED",
+      "job_state": "DONE",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "READY",
+      "message": "robot_stop published zero Twist",
+      "agent_result_msg_id": "MSG_20260625_111028_112331_AGENT_RESULT_14",
+      "command_id": "CMD_20260625_111027_4410_4C1C076B"
+    }
+  },
+  "err": [],
+  "ui_hint": {
+    "summary": "robot_stop command completed",
+    "severity": "info",
+    "highlight_robots": [
+      "tb1"
+    ],
+    "disable_buttons": [],
+    "enable_buttons": [
+      "status_request",
+      "move_forward",
+      "move_backward",
+      "turn_left",
+      "turn_right"
+    ]
+  },
+  "trace": {
+    "request_msg_id": "MSG_20260625_111027_4410_4C1C076B",
+    "command_id": "CMD_20260625_111027_4410_4C1C076B",
+    "job_id": "JOB_20260625_ROBOT_STOP_TB1_000002",
+    "server_log_categories": [
+      "operator_requests",
+      "commands",
+      "results",
+      "operator_responses"
+    ]
+  }
+}

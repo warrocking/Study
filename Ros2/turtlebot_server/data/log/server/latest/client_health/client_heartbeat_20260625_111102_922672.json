@@ -1,0 +1,29 @@
+{
+  "v": 6,
+  "mt": "client_heartbeat",
+  "ts": "2026-06-25T11:11:02+09:00",
+  "request": {
+    "v": 6,
+    "mt": "client_heartbeat_request",
+    "msg_id": "MSG_20260625_CLIENT_HEARTBEAT_REQUEST_003646",
+    "ts": "2026-06-25T11:11:02+09:00",
+    "source": "fleet_server",
+    "dest": "robot_command_client",
+    "schema": "fleet_json_v0.6",
+    "request": {
+      "include_robot_states": true,
+      "robots": [
+        "14"
+      ]
+    }
+  },
+  "client_id": "robot_command_client",
+  "ip": "192.168.3.63",
+  "port": 5000,
+  "timeout_sec": 2.0,
+  "ok": false,
+  "connection_state": "DISCONNECTED",
+  "code": "E_AGENT_DISCONNECTED",
+  "message": "failed heartbeat with robot command client: [Errno 111] Connection refused",
+  "elapsed_ms": 7
+}

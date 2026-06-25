@@ -1,0 +1,28 @@
+{
+  "v": 6,
+  "schema": "fleet_json_v0.6",
+  "event": "map_image_select",
+  "ts": "2026-06-25T10:39:16+09:00",
+  "session_id": "CMD_20260625_103915_3473_C2C76067",
+  "dir_name": "20260624_202331_tb1_stop_1",
+  "source_dir": "/home/admin_kyj/turtlebot_server/data/maps/20260624_202331_tb1_stop_1",
+  "control_host": "192.168.3.59",
+  "control_user": "ubuntu",
+  "control_map_dir": "/home/ubuntu/control_laptop/control_laptop_map",
+  "ok": true,
+  "rsync_argv": [
+    "rsync",
+    "-az",
+    "-e",
+    "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new",
+    "--",
+    "/home/admin_kyj/turtlebot_server/data/maps/20260624_202331_tb1_stop_1/",
+    "ubuntu@192.168.3.59:/home/ubuntu/control_laptop/control_laptop_map/20260624_202331_tb1_stop_1/"
+  ],
+  "ssh_port": 22,
+  "ssh_connect_timeout": 5.0,
+  "elapsed_ms": 679,
+  "returncode": 0,
+  "stdout": "",
+  "stderr": ""
+}

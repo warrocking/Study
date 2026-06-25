@@ -1,0 +1,50 @@
+{
+  "v": 6,
+  "mt": "control_health_response",
+  "msg_id": "MSG_20260625_CONTROL_HEALTH_RESPONSE_002619",
+  "ref": "MSG_20260625_103640_3389_68FC88E7",
+  "ts": "2026-06-25T10:36:40+09:00",
+  "source": "fleet_server",
+  "dest": "control_ui",
+  "schema": "fleet_json_v0.6",
+  "ok": true,
+  "code": "R_HEALTH_OK",
+  "message": "fleet_server is alive",
+  "server": {
+    "server_time": "2026-06-25T10:36:40+09:00",
+    "global_state": "NORMAL",
+    "uptime_sec": 5306.598,
+    "public_ip": "192.168.3.61",
+    "control_port": 4000,
+    "control_health_port": 4000,
+    "control_command_port": 4001,
+    "control_data_port": 4002,
+    "client_event_port": 4003
+  },
+  "client": {
+    "id": "robot_command_client",
+    "ip": "192.168.3.63",
+    "port": 5000,
+    "health_port": 5000,
+    "command_port": 5001,
+    "data_control_port": 5002,
+    "connection_state": "CONNECTED",
+    "code": "R_CLIENT_ALIVE",
+    "message": "robot_command_client alive",
+    "elapsed_ms": 106
+  },
+  "robots": {
+    "tb1": {
+      "enabled": true,
+      "connection_state": "CONNECTED",
+      "operating_mode": "MAPPING",
+      "robot_state": "MAPPING",
+      "job_state": "RUNNING",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "BUSY_QUEUEABLE",
+      "last_result": "R_STARTED",
+      "last_seen": "2026-06-25T10:36:40+09:00"
+    }
+  },
+  "err": []
+}

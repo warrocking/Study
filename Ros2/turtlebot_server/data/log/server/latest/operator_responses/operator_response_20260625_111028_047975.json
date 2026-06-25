@@ -1,0 +1,67 @@
+{
+  "v": 6,
+  "mt": "operator_response",
+  "msg_id": "MSG_20260625_OPERATOR_RESPONSE_000020",
+  "ts": "2026-06-25T11:10:28+09:00",
+  "source": "fleet_server",
+  "dest": "control_ui",
+  "schema": "fleet_json_v0.6",
+  "ref": "MSG_20260625_111026_4408_87FAB876",
+  "ok": true,
+  "code": "R_FILE_SYNC_REPORTED",
+  "message": "stop_mapping command completed",
+  "command": {
+    "command_id": "CMD_20260625_111026_4408_87FAB876",
+    "group_id": null,
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000002",
+    "action": "stop_mapping",
+    "normalized_action": "stop_mapping",
+    "server_priority": 40,
+    "blocking_type": "HARD",
+    "interrupt_policy": "interrupt_current",
+    "resolved_targets": [
+      "tb1"
+    ]
+  },
+  "system": {
+    "global_state": "NORMAL"
+  },
+  "results": {
+    "tb1": {
+      "ok": true,
+      "code": "R_FILE_SYNC_REPORTED",
+      "connection_state": "CONNECTED",
+      "operating_mode": "MANUAL",
+      "robot_state": "STOPPED",
+      "job_state": "DONE",
+      "accept_state": "ACCEPTING",
+      "ui_mode": "READY",
+      "message": "map synced from client: 20260625_104143_tb1_stop_4",
+      "agent_result_msg_id": "MSG_20260625_111027_415939_AGENT_RESULT_14",
+      "command_id": "CMD_20260625_111026_4408_87FAB876"
+    }
+  },
+  "err": [],
+  "ui_hint": {
+    "summary": "stop_mapping command completed",
+    "severity": "info",
+    "highlight_robots": [
+      "tb1"
+    ],
+    "disable_buttons": [],
+    "enable_buttons": [
+      "status_request"
+    ]
+  },
+  "trace": {
+    "request_msg_id": "MSG_20260625_111026_4408_87FAB876",
+    "command_id": "CMD_20260625_111026_4408_87FAB876",
+    "job_id": "JOB_20260625_STOP_MAPPING_TB1_000002",
+    "server_log_categories": [
+      "operator_requests",
+      "commands",
+      "results",
+      "operator_responses"
+    ]
+  }
+}
