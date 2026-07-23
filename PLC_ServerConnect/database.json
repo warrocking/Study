@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "description": "Field dictionary used only when JSON format is selected. Free to extend - unknown fields are allowed and just get a warning, not an error.",
+  "fields": {
+    "device": {
+      "type": "string",
+      "example": "X1006",
+      "description": "PLC device address or robot signal name"
+    },
+    "value": {
+      "type": "number|string",
+      "example": 1,
+      "description": "Value being read or written"
+    },
+    "label": {
+      "type": "string",
+      "example": "product_arrival_lamp",
+      "description": "Human-readable description of the field"
+    },
+    "command": {
+      "type": "string",
+      "example": "read",
+      "description": "Kind of action: e.g. read/write"
+    }
+  }
+}
