@@ -1,0 +1,4 @@
+{
+  "recommendations": ["ms-python.python", "Maxzurek.abb-rapid-pack"],
+  "unwantedRecommendations": ["verbotics.abb-rapid"]
+}

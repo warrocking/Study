@@ -34,5 +34,8 @@ Ros2/turtlebot_server/**/*.pyc
 **/__pycache__/
 **/*.pyc
 
+# Python virtual environments
+**/.venv/
+
 # Claude Code local settings (personal, machine-specific - not shared)
 **/.claude/settings.local.json

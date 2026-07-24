@@ -14,6 +14,13 @@
 - `.gitignore`에 `.claude/settings.local.json`(개인 권한 설정), `__pycache__`/`*.pyc`는 제외되어 있음
   (새 컴퓨터에서 Claude Code 쓰면 이 파일은 알아서 새로 생김, 신경 안 써도 됨).
 
+## VSCode / RAPID 확장 세팅
+
+RAPID 자동완성, 스니펫, 확장 프로그램 관련 세팅은 **`RobotStudio/SETUP_LOG.md`를 반드시 먼저 읽을 것.**
+이 문서는 일반 설명서가 아니라 시간순 로그 형식이며, `✅ 현재 사용 중` / `❌ 폐기됨` 표시가 있는
+항목만 신뢰할 것 — 특히 `❌` 항목은 "비슷해 보여도 이미 시도했다가 버린 설정"이니 그대로
+가져다 쓰지 말 것.
+
 ## 핵심 파일
 
 - **`RobotStudio/project.mod`** — 지금 실제로 작업 중인 메인 RAPID 모듈(`MainModule`). **이게 진짜 작업 대상.**
