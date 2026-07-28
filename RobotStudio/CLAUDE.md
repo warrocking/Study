@@ -24,6 +24,9 @@ RAPID 자동완성, 스니펫, 확장 프로그램 관련 세팅은 **`RobotStud
 ## 핵심 파일
 
 - **`RobotStudio/project.mod`** — 지금 실제로 작업 중인 메인 RAPID 모듈(`MainModule`). **이게 진짜 작업 대상.**
+- `RobotStudio/Example.mod` — 실제 공장 코드가 아니라, ABB 공식 현장 표준 문서(3HAC046417-001)의 명명
+  규칙/구조(pXX, mvStart_End, RAISE+ERROR 에러 처리 등)를 보여주는 참고/학습용 파일. 출처와 한계는
+  파일 상단 주석 참고.
 - `RobotStudio/AMR_Project.mod`, `0701_griponoff_6times.mod`, `0702.mod`, `0706.mod`, `0707.mod`,
   `0715_projectModule.mod`, `axis6_wipe_example.mod`, `ex_p224.mod`, `reorient_example.mod` —
   전부 예전 실습/테스트용 모듈. `project.mod`와 별개이니 혼동하지 말 것.
