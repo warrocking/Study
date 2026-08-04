@@ -1,0 +1,12 @@
+# 이 중계기의 이름과, 담당하는 ABB 로봇/관리자 서버 주소.
+# TestServer_Connector.py가 새 버전으로 바뀌어도 이 파일은 그대로 두면 됩니다.
+#
+# RELAY_NAME: 관리자 화면에서 이 중계기를 부를 때 쓰는 이름 - 다른 중계기와
+# 겹치지 않게 고유한 이름으로 정하세요 (예: ABB1, ABB2, ABB3, AMR1).
+RELAY_NAME=Relay1
+
+ABB_HOST=192.168.3.3
+ABB_PORT=5000
+
+ADMIN_HOST=100.109.178.123
+ADMIN_PORT=5000
