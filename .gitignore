@@ -37,5 +37,14 @@ Ros2/turtlebot_server/**/*.pyc
 # Python virtual environments
 **/.venv/
 
-# Claude Code local settings (personal, machine-specific - not shared)
-**/.claude/settings.local.json
+# Pytest cache
+**/.pytest_cache/
+
+# Office lock/temp files (created while a .pptx/.docx is open)
+**/~$*
+
+# Scratch/temporary working files (PDF/PPT extraction drafts, etc.)
+tmp/
+
+# Claude Code local project state (personal, machine-specific - not shared)
+.claude/
