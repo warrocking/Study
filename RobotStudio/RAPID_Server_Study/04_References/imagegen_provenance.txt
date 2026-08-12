@@ -1,0 +1,28 @@
+ImageGen asset prompts and intended use
+Generated 2026-08-10 for ABB RAPID–Python server study materials.
+
+01_rapid_cover.png
+Modern orange six-axis industrial robot in a clean digital factory cell, white/cool-gray editorial background, cobalt technical accents, large negative space for title, no readable text or logos. Use: Deck 1 cover only.
+
+02_rapid_evolution.png
+Wordless progression from legacy controller and teach pendant through offline simulation to modern connected virtualized robot cell. Use: Deck 1 history slide only.
+
+03_motion_frames.png
+Robot motion scene with RGB coordinate frames at base/workpiece/TCP, approach-process-retreat path, ghost poses. Use: Deck 2 coordinate/motion overview only.
+
+04_io_signals.png
+Robot gripper, sensors, valve manifold, stack light, safety gate and I/O terminal connected by blue signal lines. Use: Deck 2 cover only.
+
+05_tailscale_mesh.png
+Wordless private mesh VPN linking two laptops to a factory gateway and fenced robot cell. Use: Deck 3 cover only.
+
+06_tcp_stream.png
+Wordless reliable ordered byte stream: blue data tiles, cyan acknowledgements, restoration of a displaced tile, laptop-to-controller. Use: Deck 3 TCP overview only.
+
+07_python_bridge.png
+Wordless layered Python API/service bridge between developer laptop and industrial robot controller. Use: Deck 4 cover only.
+
+08_diagnostic_ladder.png
+Wordless diagnostic path from power/mode through routing, security, framing and application state to healthy robot cell. Use: Deck 4 troubleshooting slide only.
+
+All assets were generated with OpenAI ImageGen. Original generation paths remain under C:\Users\user\.codex\generated_images.

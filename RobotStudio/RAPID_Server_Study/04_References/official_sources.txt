@@ -1,0 +1,49 @@
+ABB / RobotStudio / RAPID
+
+- ABB, Technical reference manual - RAPID Overview, RobotWare 8 (3HAC098389-001): https://library.e.abb.com/public/3ccc2919e3a849b1b08033863c35c53c/3HAC098389%20TRM%20RAPID%20Overview%20RW%208-en.pdf
+- ABB, Technical reference manual - RAPID Instructions, Functions and Data types, RobotWare 8 (3HAC098387-001): https://library.e.abb.com/public/12119ddea3f74fda9cfd6e0c01caab29/3HAC098387%20TRM%20RAPID%20RW%208-en.pdf
+- ABB, Application manual - Controller software OmniCore RobotWare 8 (3HAC098393-001): https://library.e.abb.com/public/78694e7ead37451cb2aa714cd36bb761/3HAC098393%20AM%20Controller%20software%20OmniCore%20RW%208-en.pdf
+- ABB, Operating manual - RobotStudio 2026.2 (3HAC032104-001, Rev BB): https://library.e.abb.com/public/4fe5ab4f31d9400fab27641ca5bac757/3HAC032104-001_en_BB_Operating%20manual%20-%20RobotStudio.pdf
+- ABB Developer Center, What is RAPID: https://developercenter.robotstudio.com/api/robotstudio/articles/Concepts/Rapid/What-is-Rapid.html
+- ABB Developer Center, RAPID Data: https://developercenter.robotstudio.com/api/robotstudio/articles/Concepts/Rapid/Rapid-Data.html
+- ABB Developer Center, RobotStudio Station and RAPID Sync: https://developercenter.robotstudio.com/api/robotstudio/articles/Concepts/Rapid/RobotStudio-Station-Elements.html
+- ABB, Robot Web Services introduction (RWS 1.x / RW6): https://developercenter.robotstudio.com/api/rwsApi/
+- ABB, Robot Web Services OpenAPI introduction (RWS 2.0 / RW7+): https://developercenter.robotstudio.com/api/RWS?urls.primaryName=File+Service
+- ABB, RWS RAPID resources: https://developercenter.robotstudio.com/api/rwsApi/rapid_system_page.html
+- ABB, Application manual - Externally Guided Motion, RobotWare 7 (3HAC073318-001): https://library.e.abb.com/public/08edc8917ce745be873c3f8ba60a45cc/3HAC073318%20AM%20Externally%20Guided%20Motion%20RW7-en.pdf
+
+Python / API server
+
+- Python 3.12 documentation, socket: https://docs.python.org/3.12/library/socket.html
+- Python 3.12 documentation, asyncio streams: https://docs.python.org/3.12/library/asyncio-stream.html
+- FastAPI official tutorial: https://fastapi.tiangolo.com/tutorial/
+- FastAPI official testing guide: https://fastapi.tiangolo.com/tutorial/testing/
+- FastAPI dependencies: https://fastapi.tiangolo.com/tutorial/dependencies/
+- Pydantic models: https://docs.pydantic.dev/latest/concepts/models/
+- Pydantic settings management: https://docs.pydantic.dev/latest/concepts/pydantic_settings/
+
+Networking standards
+
+- IETF RFC 9293, Transmission Control Protocol: https://www.rfc-editor.org/info/rfc9293/
+- IETF RFC 9110, HTTP Semantics: https://www.rfc-editor.org/info/rfc9110/
+- IETF RFC 9112, HTTP/1.1 message syntax and routing: https://www.rfc-editor.org/info/rfc9112/
+- IETF RFC 9846, TLS 1.3 (obsoletes RFC 8446 as of 2026): https://www.rfc-editor.org/info/rfc9846/
+- IETF RFC 6455, WebSocket Protocol: https://www.rfc-editor.org/info/rfc6455/
+- IETF RFC 8259, JSON: https://www.rfc-editor.org/info/rfc8259/
+
+Tailscale
+
+- Tailscale subnet routers: https://tailscale.com/docs/features/subnet-routers
+- Tailscale access-control grants: https://tailscale.com/docs/features/access-control/grants
+- Tailscale grants syntax: https://tailscale.com/docs/reference/syntax/grants
+- Tailscale MagicDNS: https://tailscale.com/docs/features/magicdns
+- Tailscale HTTPS certificates: https://tailscale.com/docs/how-to/set-up-https-certificates
+- Tailscale and WireGuard: https://tailscale.com/docs/concepts/wireguard
+
+Research notes
+
+- Primary technical sources only were used for normative behavior and version-sensitive claims.
+- RWS 1.x and RWS 2.0 differ in protocol details, media types, authentication/session handling, and supported resources. Code in the companion project defaults to read-only and requires explicit opt-in for writes.
+- RAPID Socket Messaging is a TCP byte stream. Application messages therefore require explicit framing; this package uses CRLF-terminated ASCII frames for the RAPID exercise and newline-delimited JSON for Python-native clients.
+- Tailscale provides a secure access path. It is not treated as a robot safety function or deterministic real-time fieldbus.
+- EGM is documented as a separate UDP/protobuf motion-guidance option and is not tunneled into the basic socket exercise.

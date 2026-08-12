@@ -1,0 +1,23 @@
+{
+  // Replace example identities and the lab subnet before applying.
+  "groups": {
+    "group:robot-lab": ["student@example.com"]
+  },
+  "hosts": {
+    "robot-lab-subnet": "192.0.2.0/24"
+  },
+  "grants": [
+    {
+      "src": ["group:robot-lab"],
+      "dst": ["robot-lab-subnet"],
+      "ip": ["tcp:443", "tcp:80", "tcp:9100"]
+    }
+  ],
+  "tests": [
+    {
+      "src": "student@example.com",
+      "accept": ["192.0.2.10:443", "192.0.2.20:9100"]
+    }
+  ]
+}
+

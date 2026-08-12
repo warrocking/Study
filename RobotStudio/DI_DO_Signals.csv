@@ -1,0 +1,24 @@
+﻿구분,신호명,설명,사용 위치(project.mod 줄번호),비고
+DI,di09_interrupt,비상정지(E-Stop) 인터럽트 신호 - 0→1 되는 순간 Trap_EStop 트랩 발동,"114, 617",Main()에서 ISignalDI로 바인딩; Trap_EStop 복귀 대기 조건으로도 사용
+DI,di21_1st_Con_End,컨베이어1 끝 도달 - 타이어를 집어 프레스로 적재,204,Run_Production_Cycle 첫 단계
+DI,di22_PressEnd,프레스 완료 - 타이어를 집어 냉각 후 컨베이어2로 이송,221,Reorient_CoolingSweep 호출 트리거
+DI,di23_2nd_Con_End,컨베이어2 끝 도달 - 타이어를 집어 색상 센서로 판별,249,흑/백 분기(di04/di05) 진입점
+DI,di04_plastic_black,색상 판별 결과 - 검정(정상) 타이어,260,정상 분기: 컨베이어3 → tool1 → tool2 → 창고
+DI,di05_plastic_white,색상 판별 결과 - 흰색(불량) 타이어,269,"불량 분기: 즉시 트래시 처리 후 사이클 강제 종료. count_White CASE 2/3/4 미구현 버그 있음(2번째 불량부터 안 놓임, 프로젝트 CLAUDE.md 참고)"
+DI,di24_tool1_start,tool1(비드코팅) 스테이션 동작 시작 신호,297,tool1을 집어 축6 180도 회전으로 코팅
+DI,di25_tool2_Start,tool2(원형 스프레이) 스테이션 동작 시작 신호,329,tool2를 집어 반경 10mm 원형 스프레이(MoveC 2회)
+DI,di26_Store_Move,컨베이어3 끝 도달 - 완성 타이어를 창고 박스로 적재 시작,365,Count(0~3)로 박스 1~4 선택; Count=4 되면 일괄 이송
+DI,di00_grip_on_sen,그리퍼 닫힘(Grip_on) 완료 확인 센서,636,"WaitDI에 타임아웃 없음 - 센서 무응답 시 로봇 무한 대기(미해결 이슈, 프로젝트 CLAUDE.md 참고)"
+DI,di01_grip_off_sen,그리퍼 열림(Grip_off) 완료 확인 센서,642,"WaitDI에 타임아웃 없음 - 센서 무응답 시 로봇 무한 대기(미해결 이슈, 프로젝트 CLAUDE.md 참고)"
+DO,do00_grip_on,그리퍼 닫기 동작 트리거 펄스,635,Grip_on 프로시저에서 PulseDO
+DO,do01_grip_off,그리퍼 열기 동작 트리거 펄스,641,Grip_off 프로시저에서 PulseDO
+DO,do03_reset_jedg,색상 센서 판별값 리셋,"265, 292",정상/불량 분기 각각에서 리셋
+DO,do05_1st_con_Start,컨베이어1 시작 신호,"201, 288, 440",사이클 시작 시 및 각 타이어 처리 완료 후 다음 타이어를 위해 재기동
+DO,do06_pressStart,프레스 동작 시작 신호,218,di21 처리 후 프레스에 타이어 적재 완료 시
+DO,do07_CoolingAction,냉각 스테이션 공기 분사 ON/OFF,"573(ON), 585(OFF), 601(강제 OFF)",Reorient_CoolingSweep에서 제어; Trap_EStop에서 안전을 위해 강제 OFF
+DO,do08_2nd_Con_Start,컨베이어2 시작 신호,244,di22 처리 후 냉각 완료 타이어를 컨베이어2에 올릴 때
+DO,do09_3rd_Con_Start,컨베이어3 시작 신호,266,정상(검정) 타이어만 - di04 분기에서
+DO,do10_tool1_End,tool1(비드코팅) 작업 완료 신호,316,축6 180도 회전 코팅 종료 후
+DO,do11_Tool2_Start,tool2 스프레이 동작 ON/OFF,"346(ON), 351(OFF), 602(강제 OFF)",원형 스프레이 진행 중에만 ON; Trap_EStop에서 안전을 위해 강제 OFF
+DO,do12_tool2_End,tool2(스프레이) 작업 완료 신호,353,원형 스프레이 종료 후
+DO,do13_ProcEnd,타이어 1개 처리(사이클) 완료 신호 - PLC에 통지,"289, 441",불량 처리 종료 시 및 정상 처리(창고 적재까지) 종료 시 각각 발생
