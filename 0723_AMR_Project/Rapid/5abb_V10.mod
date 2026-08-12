@@ -1,28 +1,36 @@
 MODULE MainModule
 
-    ! ?? ?? - ??
-! di00_Axle_Cylinder_FDone          : ? ?? ??
-! di01_Axle_Gripper_Off             : ? ?? off
-! di02_Axle_Gripper_On              : ? ?? of
-! di03_Tier_Supply_Done             : ??? ?? ??
-! di04_Battery_Supply_Done          : ??? ?? ??
-! di05_Assembly_Cylinder_Forward    : ?? ? ?? ??
-! di06_Assembly_Cylinder_Back       : ?? ? ?? ??
-! di07_Motor_Supply_Done            : ?? ????
+    ! ===== 디지털 입력(DI) 목록 =====
+! di00_Axle_Cylinder_FDone          : 축 실린더 전진 완료
+! di01_Axle_Gripper_Off             : 축 그리퍼 off 완료
+! di02_Axle_Gripper_On              : 축 그리퍼 on 완료
+! di03_Tier_Supply_Done             : 타이어 공급 완료
+! di04_Battery_Supply_Done          : 배터리 공급 완료
+! di05_Assembly_Cylinder_Forward    : 조립 실린더 전진 완료
+! di06_Assembly_Cylinder_Back       : 조립 실린더 후진 완료
+! di07_Motor_Supply_Done            : 모터 공급 완료
+! di09_Palette_Available            : 출고 컨베이어 팔레트 준비됨
+!                                      (1=빈 팔레트 대기 중 - 전송 가능, 0=팔레트 없음 또는 이미 적재됨 - 대기 필요)
 
-! ?? ?? - ??
-! do00_First_AD_On                  : ??? ??
-! do01_Second_AD_ON                 : ??? ??
-! do02_Process_Start                : ???? ??
-! do03_Axle_Supply_Forward          : ? ?? ?? ??
-! do04_Axle_Supply_Back             : ? ?? ?? ??
-! do05_Assembly_Cylinder_Forward    : ?? ??? ??
-! do06_Assembly_Cylinder_Back       : ?? ??? ??
-! do07_Tier_Supply                  : ??? ?? ??
-! do08_Axle_Gripper_On              : ? ?? ?? ??
-! do09_Axle_Gripper_Off             : ? ?? ?? ??
-! do10_Battery_Supply               : ??? ?? ??
-! do11_Motor_Supply                 : ?? ?? ??
+! ===== 디지털 출력(DO) 목록 =====
+! do00_First_AD_On                  : 1번 흡착(에어) on
+! do01_Second_AD_ON                 : 2번 흡착(에어) on
+! do02_Process_Start                : 공정 시작
+! do03_Axle_Supply_Forward          : 축 공급 실린더 전진
+! do04_Axle_Supply_Back             : 축 공급 실린더 후진
+! do05_Assembly_Cylinder_Forward    : 조립 실린더 전진
+! do06_Assembly_Cylinder_Back       : 조립 실린더 후진
+! do07_Tier_Supply                  : 타이어 공급
+! do08_Axle_Gripper_On              : 축 그리퍼 on
+! do09_Axle_Gripper_Off             : 축 그리퍼 off
+! do10_Battery_Supply               : 배터리 공급
+! do11_Motor_Supply                 : 모터 공급
+! do12_Axle_Gripper_On_End          : 축 그리퍼 on 완료 신호(펄스)
+! do13_Axle_Gripper_Off_End         : 축 그리퍼 off 완료 신호(펄스)
+! do16_Dilivery_Start               : 출고 시작 신호(팔레트를 컨베이어에 내려놓은 뒤 전송 트리거)
+!
+! ※ di09/do12/do13/do16 설명은 코드 내 사용 맥락을 보고 재구성한 것입니다 -
+!   실제 PLC I/O표와 다르면 알려주세요.
 !
     CONST num OFS_APPROACH := 25;
 
@@ -209,6 +217,12 @@ MODULE MainModule
     ENDPROC
 
     PROC Run_Assembly_Cycle()
+        ! TODO(구조개선 예정): "하부체 2개 생산" 목표를 위해 아래 조립~Sender
+        !   구간 전체를 FOR n_lowerBodyCount FROM 1 TO 2 DO ... ENDFOR 로 감싸는
+        !   작업이 예정되어 있음 (사용자 작업 예정). n_lowerBodyCount 선언(:= 0)만
+        !   반복문 밖으로 빼고, 증가/완성 메시지 전송 부분은 반복문 안에 그대로
+        !   두면 "하부체 1회 완성"/"하부체 2회 완성"이 자동으로 순서대로 나감.
+        VAR num n_lowerBodyCount := 0;
 
             Axle;
             MoveJ p_Center_Horizontal, v_fast, z30, tool3;
@@ -227,13 +241,21 @@ MODULE MainModule
 
             Tier_Linked;
             MoveJ p_Center_Vertical, v_fast, z30, tool3;
-        
+
             IF di09_Palette_Available = 1 THEN
                 Sender;
             ELSEIF di09_Palette_Available = 0 THEN
-                WaitDI di09_Palette_Available, 1;
-                Sender;               
-            ENDIF        
+                TPWrite "Palette not available, skipping sending";
+                SocketSend srv_client_socket \Str:="5abb는 대기중";
+                while di09_Palette_Available = 0 DO
+                    WaitTime 3;
+                ENDWHILE
+                Sender;
+            ENDIF
+
+            n_lowerBodyCount := n_lowerBodyCount + 1;
+            SocketSend srv_client_socket \Str:="하부체 " + NumToStr(n_lowerBodyCount, 0) + "회 완성";
+
         MoveJ p_Center_Horizontal, v_fast, z30, tool3;
     ENDPROC
 

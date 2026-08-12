@@ -1,28 +1,36 @@
 MODULE MainModule
 
-    ! ?? ?? - ??
-! di00_Axle_Cylinder_FDone          : ? ?? ??
-! di01_Axle_Gripper_Off             : ? ?? off
-! di02_Axle_Gripper_On              : ? ?? of
-! di03_Tier_Supply_Done             : ??? ?? ??
-! di04_Battery_Supply_Done          : ??? ?? ??
-! di05_Assembly_Cylinder_Forward    : ?? ? ?? ??
-! di06_Assembly_Cylinder_Back       : ?? ? ?? ??
-! di07_Motor_Supply_Done            : ?? ????
+    ! ===== Digital Inputs (DI) =====
+! di00_Axle_Cylinder_FDone          : Axle cylinder forward complete
+! di01_Axle_Gripper_Off             : Axle gripper off complete
+! di02_Axle_Gripper_On              : Axle gripper on complete
+! di03_Tier_Supply_Done             : Tire supply complete
+! di04_Battery_Supply_Done          : Battery supply complete
+! di05_Assembly_Cylinder_Forward    : Assembly cylinder forward complete
+! di06_Assembly_Cylinder_Back       : Assembly cylinder back complete
+! di07_Motor_Supply_Done            : Motor supply complete
+! di09_Palette_Available            : Outbound conveyor pallet ready
+!                                      (1 = empty pallet waiting, OK to send; 0 = no pallet or already loaded, must wait)
 
-! ?? ?? - ??
-! do00_First_AD_On                  : ??? ??
-! do01_Second_AD_ON                 : ??? ??
-! do02_Process_Start                : ???? ??
-! do03_Axle_Supply_Forward          : ? ?? ?? ??
-! do04_Axle_Supply_Back             : ? ?? ?? ??
-! do05_Assembly_Cylinder_Forward    : ?? ??? ??
-! do06_Assembly_Cylinder_Back       : ?? ??? ??
-! do07_Tier_Supply                  : ??? ?? ??
-! do08_Axle_Gripper_On              : ? ?? ?? ??
-! do09_Axle_Gripper_Off             : ? ?? ?? ??
-! do10_Battery_Supply               : ??? ?? ??
-! do11_Motor_Supply                 : ?? ?? ??
+! ===== Digital Outputs (DO) =====
+! do00_First_AD_On                  : Absorption unit 1 ON
+! do01_Second_AD_ON                 : Absorption unit 2 ON
+! do02_Process_Start                : Process start
+! do03_Axle_Supply_Forward          : Axle supply cylinder forward
+! do04_Axle_Supply_Back             : Axle supply cylinder back
+! do05_Assembly_Cylinder_Forward    : Assembly cylinder forward
+! do06_Assembly_Cylinder_Back       : Assembly cylinder back
+! do07_Tier_Supply                  : Tire supply
+! do08_Axle_Gripper_On              : Axle gripper on
+! do09_Axle_Gripper_Off             : Axle gripper off
+! do10_Battery_Supply               : Battery supply
+! do11_Motor_Supply                 : Motor supply
+! do12_Axle_Gripper_On_End          : Axle gripper on complete pulse
+! do13_Axle_Gripper_Off_End         : Axle gripper off complete pulse
+! do16_Dilivery_Start               : Delivery start trigger (after placing pallet on conveyor)
+!
+! Note: di09/do12/do13/do16 descriptions were inferred from how they're used
+!   in the code below - please correct if they don't match the real PLC I/O table.
 !
     CONST num OFS_APPROACH := 25;
 
@@ -64,9 +72,6 @@ MODULE MainModule
     ! ===== Tire 1 - evenly re-spaced via-points (Set/90/link kept exactly as taught in
     !       versionServer5.mod; only 15/30/45/60/75 recomputed by splitting the Set->90
     !       rotation into 6 equal steps: position LERP + quaternion SLERP) =====
-    ! ===== ??? 1 - ?? ??? ??? (Set/90/link? versionServer5.mod? ??? ?
-    !       ???; 15/30/45/60/75? Set->90 ??? 6???? ?? ???: ???
-    !       LERP, ??? ???? SLERP ??) =====
     PERS robtarget p_tier_1_15 := [[429.95,-208.81,277.31],[-0.057749,0.374230,0.918085,0.117202],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_1_30 := [[430.19,-207.41,274.39],[-0.114523,0.374507,0.890299,0.232373],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_1_45 := [[430.44,-206.02,271.48],[-0.169320,0.368320,0.847145,0.343534],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
@@ -77,7 +82,6 @@ MODULE MainModule
 
     PERS robtarget p_tier_2_Set:= [[531.32,-200.29,280.97],[4.43347E-06,-0.412095,-0.911141,2.68129E-06],[-1,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     ! ===== Tire 2 - evenly re-spaced via-points (same method as tire 1) =====
-    ! ===== ??? 2 - ?? ??? ??? (??? 1? ?? ??) =====
     PERS robtarget p_tier_2_15 := [[531.24,-201.31,277.96],[0.057765,-0.412549,-0.901532,-0.117078],[-1,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_2_30 := [[531.16,-202.32,274.94],[0.114537,-0.405933,-0.876473,-0.232151],[-1,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_2_45 := [[531.09,-203.33,271.93],[0.169345,-0.392361,-0.836395,-0.343247],[-1,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
@@ -88,7 +92,6 @@ MODULE MainModule
 
     PERS robtarget p_tier_3_Set := [[430.43,-56.70,299.17],[1.08864E-05,-0.402847,-0.915267,2.79987E-06],[-1,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     ! ===== Tire 3 - evenly re-spaced via-points (same method as tire 1) =====
-    ! ===== ??? 3 - ?? ??? ??? (??? 1? ?? ??) =====
     PERS robtarget p_tier_3_15 := [[430.18,-54.82,293.44],[-0.050601,-0.397438,-0.908298,0.120321],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_3_30 := [[429.94,-52.94,287.72],[-0.100347,-0.385227,-0.885782,0.238580],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_3_45 := [[429.69,-51.05,281.99],[-0.148375,-0.366422,-0.848106,0.352755],[0,-1,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
@@ -99,7 +102,6 @@ MODULE MainModule
 
     PERS robtarget p_tier_4_Set := [[532.75,-43.49,282.44],[5.99017E-05,-0.401017,-0.91607,2.16294E-05],[-1,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     ! ===== Tire 4 - evenly re-spaced via-points (same method as tire 1) =====
-    ! ===== ??? 4 - ?? ??? ??? (??? 1? ?? ??) =====
     PERS robtarget p_tier_4_15 := [[532.15,-44.63,279.40],[-0.049251,-0.394554,-0.909553,0.120891],[-1,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_4_30 := [[531.54,-45.77,276.36],[-0.097719,-0.381334,-0.887459,0.239690],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     PERS robtarget p_tier_4_45 := [[530.94,-46.91,273.32],[-0.144513,-0.361583,-0.850168,0.354384],[0,-1,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
@@ -130,15 +132,9 @@ MODULE MainModule
 
         Absorption_Off 3; !SetDo do00, do01 0
 
-        !PulseDO\PLength := 0.2,  do03_Axle_Supply_Forward;
         PulseDO\PLength := 0.2,  do04_Axle_Supply_Back;
-        !PulseDO\PLength := 0.2,  do05_Assembly_Cylinder_Forward;
         PulseDO\PLength := 0.2,  do06_Assembly_Cylinder_Back;
-        !PulseDO\PLength := 0.2,  do07_Tier_Supply;
-        !PulseDO\PLength := 0.2,  do08_Axle_Gripper_On;
         PulseDO\PLength := 0.2,  do09_Axle_Gripper_Off;
-        !PulseDO\PLength := 0.2,  do10_Battery_Supply;
-        !PulseDO\PLength := 0.2,  do11_Motor_Supply;
 
     ENDPROC
 
@@ -188,20 +184,9 @@ MODULE MainModule
     ENDPROC
 
     PROC Handle_Command(string cmd)
-        !IF (StrLen(cmd) >= 5) AND (StrPart(cmd, 1, 5) = "Start") THEN
-        !        !MoveL p_Center, v_moveSpeed, fine, tool3;
-        !        TPWrite "Move done";
-        !        Run_Assembly_Cycle;
-        !ELSEIF (StrLen(cmd) >= 3) AND (StrPart(cmd, 1, 3) = "End") THEN
-            ! ??
-        !ELSEIF (StrLen(cmd) >= 9) AND (StrPart(cmd, 1, 9) = "Emergency") THEN
-            ! ??
-        !ENDIF
-
-
         IF (StrLen(cmd) >= 5) THEN
             IF (StrPart(cmd, 1, 5) = "Start") OR (StrPart(cmd, 1, 5) = "start") THEN
-                TPWrite "Move Start";
+                TPWrite "5abb Assembly Move Start";
                 Run_Assembly_Cycle;
                 RETURN;
             ENDIF
@@ -209,6 +194,13 @@ MODULE MainModule
     ENDPROC
 
     PROC Run_Assembly_Cycle()
+        ! TODO (structure change planned): to reach the "2 lower-body units" goal,
+        !   wrap the assembly~Sender block below in
+        !   FOR n_lowerBodyCount FROM 1 TO 2 DO ... ENDFOR (planned by user).
+        !   Only move the n_lowerBodyCount declaration (:= 0) outside the loop;
+        !   keep the increment/completion-message lines inside the loop so the
+        !   "unit 1 complete" / "unit 2 complete" messages fire in order automatically.
+        VAR num n_lowerBodyCount := 0;
 
             Axle;
             MoveJ p_Center_Horizontal, v_fast, z30, tool3;
@@ -227,13 +219,21 @@ MODULE MainModule
 
             Tier_Linked;
             MoveJ p_Center_Vertical, v_fast, z30, tool3;
-        
+
             IF di09_Palette_Available = 1 THEN
                 Sender;
             ELSEIF di09_Palette_Available = 0 THEN
-                WaitDI di09_Palette_Available, 1;
-                Sender;               
-            ENDIF        
+                TPWrite "Palette not available, skipping sending";
+                SocketSend srv_client_socket \Str:="5abb는 대기중";
+                while di09_Palette_Available = 0 DO
+                    WaitTime 3;
+                ENDWHILE
+                Sender;
+            ENDIF
+
+            n_lowerBodyCount := n_lowerBodyCount + 1;
+            SocketSend srv_client_socket \Str:="하부체 " + NumToStr(n_lowerBodyCount, 0) + "회 완성";
+
         MoveJ p_Center_Horizontal, v_fast, z30, tool3;
     ENDPROC
 
@@ -399,8 +399,6 @@ MODULE MainModule
                 MoveL p_tier_4_30, v_slow, z30, tool3;
                 MoveL p_tier_4_15, v_slow, z30, tool3;
                 MoveL p_tier_4_Set, v_slow, z30, tool3;
-
-                !???
 
             ENDTEST
             MoveJ p_Center_Horizontal, v_fast, z30, tool3;
