@@ -1,4 +1,4 @@
-﻿# Build artifacts
+# Build artifacts
 *.exe
 *.obj
 *.pdb
@@ -45,6 +45,12 @@ Ros2/turtlebot_server/**/*.pyc
 
 # Scratch/temporary working files (PDF/PPT extraction drafts, etc.)
 tmp/
+.codex_tmp/
+.codex_tmp_eventaudit/
+.tmp_*
 
 # Claude Code local project state (personal, machine-specific - not shared)
 .claude/
+
+# Separate standalone repo, pushed to its own GitHub repository - not part of Study
+Final_Project/천안교육센터_최종프로젝트/
