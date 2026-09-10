@@ -7,8 +7,6 @@ ABB 로봇 3대(3abb/4abb/5abb), Omron LD-90 AMR(Arduino UNO R4 WiFi 브릿지),
 릴레이합니다. 중앙 서버는 로봇의 `ReadyForPickup` 과 AMR의 도착 이벤트를 매칭해
 `AmrArrived` 를 내려주는 방식으로 출고를 게이팅합니다.
 
-## 폴더 구성
-
 | 경로                                | 설명                               |
 | --------------------------------- | -------------------------------- |
 | `Final_Ver07/`                    | 최종 버전 (Server / Rapid / Arduino) |

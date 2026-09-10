@@ -8,7 +8,7 @@
 
 - GitHub: `https://github.com/warrocking/Study.git` (origin, branch `master`)
 - 이 저장소는 여러 학습 주제(C, CPP, OpenCV, PLC, Ros2 등)를 한 데 모아둔 개인 스터디 저장소이고,
-  `RobotStudio/`와 `PLC_ServerConnect/`가 이 타이어 프로젝트의 실제 작업 폴더입니다.
+  `RobotStudio/`와 `RobotStudio/PLC_ServerConnect/`가 이 타이어 프로젝트의 실제 작업 폴더입니다.
 - 인증은 Git Credential Manager(`credential.helper=manager`) 사용 — 새 컴퓨터에서 처음 push할 때
   로그인 창이 뜰 수 있음.
 - `.gitignore`에 `.claude/settings.local.json`(개인 권한 설정), `__pycache__`/`*.pyc`는 제외되어 있음
@@ -30,9 +30,9 @@ RAPID 자동완성, 스니펫, 확장 프로그램 관련 세팅은 **`RobotStud
 - `RobotStudio/AMR_Project.mod`, `0701_griponoff_6times.mod`, `0702.mod`, `0706.mod`, `0707.mod`,
   `0715_projectModule.mod`, `axis6_wipe_example.mod`, `ex_p224.mod`, `reorient_example.mod` —
   전부 예전 실습/테스트용 모듈. `project.mod`와 별개이니 혼동하지 말 것.
-- **`PLC_ServerConnect/main.py`** — PC(노트북)에서 로봇 서버(`192.168.3.3:5000`)에 접속해서
+- **`RobotStudio/PLC_ServerConnect/main.py`** — PC(노트북)에서 로봇 서버(`192.168.3.3:5000`)에 접속해서
   `"start"`/`"end"` 텍스트 명령을 보내는 파이썬 클라이언트. `project.mod`의 `Main()`과 짝을 이룸.
-- `PLC_ServerConnect/data_format.py`, `database.json`, `tcp_connection.py` — PLC 연동 보조 코드.
+- `RobotStudio/PLC_ServerConnect/data_format.py`, `database.json`, `tcp_connection.py` — PLC 연동 보조 코드.
 
 ## 타이어 공정 흐름 (project.mod)
 

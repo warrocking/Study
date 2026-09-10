@@ -5,13 +5,13 @@
 
 ## 주요 프로젝트
 
-| 프로젝트            | 경로                                                                   | 기술                        |
-| --------------- | -------------------------------------------------------------------- | ------------------------- |
-| 키오스크 구현         | [CPP/Project\_Kiosk](CPP/Project_Kiosk)                              | C++, JSON                 |
-| PYC Basic 스마트워치 | [PYC\_Logic](PYC_Logic)                                              | Python, 센서 제어             |
-| 터틀봇 중앙 관제 서버    | [Ros2/turtlebot\_server](Ros2/turtlebot_server)                      | ROS2, TCP, JSON           |
-| 타이어 공정 자동화      | [RobotStudio](RobotStudio) + [PLC\_ServerConnect](PLC_ServerConnect) | ABB RAPID, TCP            |
-| AMR 상·하부체 이송    | [0723\_AMR\_Project](0723_AMR_Project)                               | Python 서버, RAPID, Arduino |
+| 프로젝트            | 경로                                              | 기술                        |
+| --------------- | ----------------------------------------------- | ------------------------- |
+| 키오스크 구현         | [CPP/Project\_Kiosk](CPP/Project_Kiosk)         | C++, JSON                 |
+| PYC Basic 스마트워치 | [PYC\_Logic](PYC_Logic)                         | Python, 센서 제어             |
+| 터틀봇 중앙 관제 서버    | [Ros2/turtlebot\_server](Ros2/turtlebot_server) | ROS2, TCP, JSON           |
+| 타이어 공정 자동화      | [RobotStudio](RobotStudio)                      | ABB RAPID, Python TCP     |
+| AMR 상·하부체 이송    | [0723\_AMR\_Project](0723_AMR_Project)          | Python 서버, RAPID, Arduino |
 
 하이브리드 자동차 생산공정 자동화(최종 프로젝트)는 별도 저장소에 있습니다.
 → [https://github.com/warrocking/cheonan-hybrid-vehicle-final-project](https://github.com/warrocking/cheonan-hybrid-vehicle-final-project)

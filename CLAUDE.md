@@ -7,7 +7,7 @@
 **`RobotStudio/`** — ABB 로봇 타이어 자동화 공정 프로젝트 (가장 최근/활발하게 작업 중).
 자세한 내용, 코드 컨벤션, 미해결 이슈는 **`RobotStudio/CLAUDE.md`**를 반드시 먼저 읽을 것.
 
-`PLC_ServerConnect/`는 그 프로젝트의 PC측 파이썬 TCP 클라이언트로, `RobotStudio/project.mod`와
+`RobotStudio/PLC_ServerConnect/`는 그 프로젝트의 PC측 파이썬 TCP 클라이언트로, `RobotStudio/project.mod`와
 짝을 이루는 코드입니다.
 
 나머지 폴더(C, CPP, OpenCV, PYC_Logic, Python, Ros2, TCP_IP, scripts)는 각각 독립된 학습용
